@@ -1,25 +1,18 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import androidx.annotation.NonNull;
-
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Robot {
+    public Arm arm;
+    public Claw claw;
+    public Drive drive;
 
-public SampleMecanumDrive drive;
-public Claw claw;
-public Lifter lifter;
-public ClawRotation clawRotation;
-public void init ( @NonNull HardwareMap hardwareMap){
-
-    drive= new SampleMecanumDrive(hardwareMap);
-    claw = new Claw(hardwareMap);
-    lifter = new Lifter(hardwareMap);
-    clawRotation = new ClawRotation(hardwareMap);
-
-}
-
-
+    public Robot(HardwareMap hwmap, Telemetry telemetry){
+        arm = new Arm(hwmap, telemetry);
+        claw  = new Claw(hwmap);
+        drive = new Drive(hwmap);
+    }
 }

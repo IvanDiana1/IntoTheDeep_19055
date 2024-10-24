@@ -1,25 +1,48 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw {
+    protected Servo clawRotation;
+    protected Servo clawHold;
+    private static HOLD_STATES holdstate = HOLD_STATES.FREE;
+    public Claw(HardwareMap hwmap){
+        clawHold = hwmap.get(Servo.class, HardwareConfig.CLAW_HOLD);
+        clawRotation = hwmap.get(Servo.class, HardwareConfig.CLAW_ROTATION);
 
-    private Servo claw;
-    public Claw (HardwareMap hardwareMap){
-    claw = hardwareMap.get(Servo.class,"claw");
-   // claw.setDirection(Servo.Direction.FORWARD);
-    claw.setPosition(1);
-//
-claw.setDirection(Servo.Direction.REVERSE);
+        clawHold.setPosition(0);
+        clawRotation.setPosition(0);
+    }
+    private enum HOLD_STATES{
+        FREE(0.1),HOLDING(0.45);
+        double val;
+        HOLD_STATES(double val) {
+            this.val = val;
+        }
+    }
+    private enum ROTATION_STATES{
+        LOW(0),MID(0.5),HIGH(0.8);
+        double val;
+        ROTATION_STATES(double val) {
+            this.val = val;
+        }
+    }
+    public void clawActivate(){
+        if (holdstate==HOLD_STATES.FREE){
+            holdstate = HOLD_STATES.HOLDING;
+            clawHold.setPosition(holdstate.val);
+        }
+        else {
+            holdstate = HOLD_STATES.FREE;
+            clawHold.setPosition(holdstate.val);
+        }
     }
 
-    public void ClawOpen(){
-        claw.setPosition(0.0);
-    }
-    public void ClawClose(){
-        claw.setPosition(0.8);
+    public void clawSetPos(double pos){
+        clawHold.setPosition(pos);
+        if (pos>0){
+            holdstate = HOLD_STATES.HOLDING;
+        }
     }
 }
