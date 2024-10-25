@@ -17,8 +17,8 @@ public class Lifter implements Updateable {
     private DcMotorEx right_rot;
     private Telemetry telemetry;
 
-    public static int Target=10;
-    private static final int MAX_RANGE = 450;
+    public int Target=15;
+    private static final int MAX_RANGE = 400;
 
 
     public static double kF=0.2;
@@ -30,11 +30,11 @@ public class Lifter implements Updateable {
 
 
 
-    public static PIDCoefficients UP_PID = new PIDCoefficients(1.7,0.05,0.16);
-    public static PIDCoefficients DOWN_PID = new PIDCoefficients(1,0.04,0.15);
-    public static PIDCoefficients START_PID = new PIDCoefficients(7,0.15,0);
+    public static PIDCoefficients UP_PID = new PIDCoefficients(1.8,0.1,0.26);
+    public static PIDCoefficients DOWN_PID = new PIDCoefficients(1.1,0.2,0.1);
+    public static PIDCoefficients START_PID = new PIDCoefficients(12.5,0.25,0.1);
 
-    public static PIDFController current_pid = new PIDFController(START_PID) ;
+    public  PIDFController current_pid = new PIDFController(START_PID) ;
     public static PIDFController up_pid_controller = new PIDFController(UP_PID);
     public static PIDFController down_pid_controller = new PIDFController(DOWN_PID);
 
@@ -100,7 +100,7 @@ public class Lifter implements Updateable {
         angle = currentPosition * tick_in_degrees + initial_angle;
 
         if (runPid){
-            double power = (current_pid.update((double)currentPosition / MAX_RANGE) + Math.cos(Math.toRadians(angle))*kF)*(14/voltage_sensor.getVoltage());
+            double power = ((current_pid.update((double)currentPosition / MAX_RANGE) + Math.cos(Math.toRadians(angle))*kF)*(14/voltage_sensor.getVoltage()))*0.8;
             left_rot.setPower(power);
             right_rot.setPower(power);
         }
@@ -115,7 +115,7 @@ public class Lifter implements Updateable {
         telemetry.addData("Target: ",Target);
         telemetry.addData("Rotation: ",right_rot.getCurrentPosition());
         telemetry.addData("Angle: ", angle);
-            telemetry.addData("PID: ", current_pid);
+     //   telemetry.addData("PID: ", current_pid.);
 
     }
 

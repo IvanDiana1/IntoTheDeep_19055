@@ -15,7 +15,7 @@ public class Claw {
         clawRotation.setPosition(0);
     }
     private enum HOLD_STATES{
-        FREE(0.1),HOLDING(0.45);
+        FREE(0),HOLDING(0.45);
         double val;
         HOLD_STATES(double val) {
             this.val = val;
