@@ -17,8 +17,9 @@ public class Lifter implements Updateable {
     private DcMotorEx right_rot;
     private Telemetry telemetry;
 
-    public int Target=15;
-    private static final int MAX_RANGE = 400;
+    public int Target=0;
+    public int lastTarget=0;
+    private static final int MAX_RANGE = 220;
 
 
     public static double kF=0.2;
@@ -30,14 +31,16 @@ public class Lifter implements Updateable {
 
 
 
-    public static PIDCoefficients UP_PID = new PIDCoefficients(1.8,0.1,0.26);
-    public static PIDCoefficients DOWN_PID = new PIDCoefficients(1.1,0.2,0.1);
-    public static PIDCoefficients START_PID = new PIDCoefficients(12.5,0.25,0.1);
-
-    public  PIDFController current_pid = new PIDFController(START_PID) ;
-    public static PIDFController up_pid_controller = new PIDFController(UP_PID);
+    public static PIDCoefficients UP_PID = new PIDCoefficients(1.5,0.11,0.15);
+    public static PIDCoefficients DOWN_PID = new PIDCoefficients(0.69,0.33,0.1);
+    //public static PIDCoefficients START_PID = new PIDCoefficients(12.5,0.25,0.1);
+       public static PIDCoefficients MIDDLE_DOWN_PID = new PIDCoefficients(0.45,0.3,0.02);
+      public static PIDCoefficients MIDDLE_UP_PID = new PIDCoefficients(2,0.01,0.1);
+    public  PIDFController current_pid = new PIDFController( DOWN_PID) ;
+    public static PIDFController up_pid_controller = new PIDFController(UP_PI
     public static PIDFController down_pid_controller = new PIDFController(DOWN_PID);
-
+      public static PIDFController middle_up_controller = new PIDFController(MIDDLE_UP_PID);
+       public static PIDFController middle_down_controller = new PIDFController(MIDDLE_DOWN_PID);
     public static boolean runPid = true;
     public Lifter(HardwareMap hwmap, Telemetry telemetry){
         left_rot = hwmap.get(DcMotorEx.class, HardwareConfig.LEFTROTATION);
@@ -84,13 +87,23 @@ public class Lifter implements Updateable {
 
     public void setTarget(int position){
         Target = position;
-        if (Target>right_rot.getCurrentPosition())
-            current_pid = up_pid_controller;
+        if (Target>right_rot.getCurrentPosition() && Target!=220)
+        {  current_pid= middle_up_controller;
+
+        }
         else
-            current_pid = down_pid_controller;
+        if(Target>right_rot.getCurrentPosition())
+        { current_pid = up_pid_controller;}
+        else
+            if(Target==0) {
+                if (lastTarget == MAX_RANGE) {
+                    current_pid = down_pid_controller;
+                } else current_pid = middle_down_controller;
+            }
 
         current_pid.setTargetPosition((double)Target / MAX_RANGE);
         current_pid.reset();
+        lastTarget=Target;
     }
 
     public void update(){
@@ -115,7 +128,7 @@ public class Lifter implements Updateable {
         telemetry.addData("Target: ",Target);
         telemetry.addData("Rotation: ",right_rot.getCurrentPosition());
         telemetry.addData("Angle: ", angle);
-     //   telemetry.addData("PID: ", current_pid.);
+
 
     }
 

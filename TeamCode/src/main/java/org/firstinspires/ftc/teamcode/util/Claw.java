@@ -7,6 +7,8 @@ public class Claw {
     protected Servo clawRotation;
     protected Servo clawHold;
     private static HOLD_STATES holdstate = HOLD_STATES.FREE;
+    private static ROTATION_STATES rotationState = ROTATION_STATES.LOW;
+
     public Claw(HardwareMap hwmap){
         clawHold = hwmap.get(Servo.class, HardwareConfig.CLAW_HOLD);
         clawRotation = hwmap.get(Servo.class, HardwareConfig.CLAW_ROTATION);

@@ -23,7 +23,7 @@ public class LocalizationTest extends LinearOpMode {
         SampleMecanumDrive3 drive = new SampleMecanumDrive3(hardwareMap);
         StandardTrackingWheelLocalizer2 stwl = new StandardTrackingWheelLocalizer2(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry);
-        SampleMecanumDrive3.telemetry = telemetry;
+//        SampleMecanumDrive3.telemetry = telemetry;
 
         waitForStart();
 
