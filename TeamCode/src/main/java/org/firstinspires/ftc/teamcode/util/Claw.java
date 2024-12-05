@@ -3,48 +3,68 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Claw {
-    protected Servo clawRotation;
-    protected Servo clawHold;
-    private static HOLD_STATES holdstate = HOLD_STATES.FREE;
-    private static ROTATION_STATES rotationState = ROTATION_STATES.LOW;
+    private Servo clawHold, clawHRot, clawVRot;
+    private Telemetry telemetry;
+    private static HOLD_STATES holdState = HOLD_STATES.HOLD;
+    private static VERTICAL_STATES vState = VERTICAL_STATES.DOWN;
+    private static HORIZONTAL_STATES hState = HORIZONTAL_STATES.PARALEL;
 
-    public Claw(HardwareMap hwmap){
-        clawHold = hwmap.get(Servo.class, HardwareConfig.CLAW_HOLD);
-        clawRotation = hwmap.get(Servo.class, HardwareConfig.CLAW_ROTATION);
+    public Claw(HardwareMap hwmap, Telemetry telemetry){
+        clawHold = hwmap.get(Servo.class, HardwareConfig.ClawHold);
+        clawHRot = hwmap.get(Servo.class, HardwareConfig.ClawHRotation);
+        clawVRot = hwmap.get(Servo.class, HardwareConfig.ClawVRotation);
 
-        clawHold.setPosition(0);
-        clawRotation.setPosition(0);
+        clawHold.setPosition(holdState.val);
+        clawHRot.setPosition(hState.val);
+        clawVRot.setPosition(vState.val);
+
     }
     private enum HOLD_STATES{
-        FREE(0),HOLDING(0.45);
+        HOLD(1),RELEASE(0);
         double val;
         HOLD_STATES(double val) {
             this.val = val;
         }
     }
-    private enum ROTATION_STATES{
-        LOW(0),MID(0.5),HIGH(0.8);
+    private enum HORIZONTAL_STATES {
+        PARALEL(0.5),PERPENDICULAR(0), REVERESED(1);
         double val;
-        ROTATION_STATES(double val) {
+        HORIZONTAL_STATES(double val) {
             this.val = val;
         }
     }
-    public void clawActivate(){
-        if (holdstate==HOLD_STATES.FREE){
-            holdstate = HOLD_STATES.HOLDING;
-            clawHold.setPosition(holdstate.val);
-        }
-        else {
-            holdstate = HOLD_STATES.FREE;
-            clawHold.setPosition(holdstate.val);
+    private enum VERTICAL_STATES{
+        UP(1),DOWN(0);
+        double val;
+        VERTICAL_STATES(double val) {
+            this.val = val;
         }
     }
+    public void clawCatch(){
+        if (holdState==HOLD_STATES.HOLD)
+            holdState = HOLD_STATES.RELEASE;
+        else
+            holdState = HOLD_STATES.HOLD;
+        clawHold.setPosition(holdState.val);
+    }
+    public void clawHRotate(){
+        if (hState==HORIZONTAL_STATES.PARALEL)
+            hState = HORIZONTAL_STATES.PERPENDICULAR;
+        else
+            hState = HORIZONTAL_STATES.PARALEL;
+        clawHRot.setPosition(holdState.val);
+    }
+    public void clawVRotate(){
+        if (vState==VERTICAL_STATES.UP)
+            vState = VERTICAL_STATES.DOWN;
+        else
+            vState = VERTICAL_STATES.UP;
+        clawVRot.setPosition(vState.val);
+    }
 
-    public void clawSetPos(double pos){
-        clawHold.setPosition(pos);
-        if (pos>0){
-            holdstate = HOLD_STATES.HOLDING;
-        }
+    public void printAllData(){
     }
 }

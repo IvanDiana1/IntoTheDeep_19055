@@ -37,14 +37,14 @@ public class Lifter implements Updateable {
        public static PIDCoefficients MIDDLE_DOWN_PID = new PIDCoefficients(0.45,0.3,0.02);
       public static PIDCoefficients MIDDLE_UP_PID = new PIDCoefficients(2,0.01,0.1);
     public  PIDFController current_pid = new PIDFController( DOWN_PID) ;
-    public static PIDFController up_pid_controller = new PIDFController(UP_PI
+    public static PIDFController up_pid_controller = new PIDFController(UP_PID);
     public static PIDFController down_pid_controller = new PIDFController(DOWN_PID);
       public static PIDFController middle_up_controller = new PIDFController(MIDDLE_UP_PID);
        public static PIDFController middle_down_controller = new PIDFController(MIDDLE_DOWN_PID);
     public static boolean runPid = true;
     public Lifter(HardwareMap hwmap, Telemetry telemetry){
-        left_rot = hwmap.get(DcMotorEx.class, HardwareConfig.LEFTROTATION);
-        right_rot = hwmap.get(DcMotorEx.class, HardwareConfig.RIGHTROTATION);
+        left_rot = hwmap.get(DcMotorEx.class, HardwareConfig.ArmRotationLeft);
+        right_rot = hwmap.get(DcMotorEx.class, HardwareConfig.ArmRotationRight);
 
         left_rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_rot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
