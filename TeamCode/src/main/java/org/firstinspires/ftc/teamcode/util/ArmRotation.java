@@ -19,8 +19,8 @@ public class ArmRotation implements Updateable{
     private static PIDCoefficients pid_coefficients;
     private static PIDFController rot_pid;
     public ArmRotation(HardwareMap hwmap, Telemetry telemetry){
-        leftRot = hwmap.get(DcMotorEx.class, HardwareConfig.ArmRotationLeft);
-        rightRot = hwmap.get(DcMotorEx.class, HardwareConfig.ArmRotationRight);
+//        leftRot = hwmap.get(DcMotorEx.class, HardwareConfig.ArmRotationLeft);
+//        rightRot = hwmap.get(DcMotorEx.class, HardwareConfig.ArmRotationRight);
 
         leftRot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightRot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
