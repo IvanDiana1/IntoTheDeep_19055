@@ -39,7 +39,7 @@ public class Claw {
         }
     }
     private enum VERTICAL_STATES{
-      INIT(0.05) , MIDDLE (0.5),  UP(0.2),DOWN(1);
+      INIT(0.2) , MIDDLE (0.5),  UP(0.5),DOWN(1);
         double val;
         VERTICAL_STATES(double val) {
             this.val = val;
@@ -60,11 +60,11 @@ public class Claw {
         if (hState==HORIZONTAL_STATES.PARALEL)
         {   hState = HORIZONTAL_STATES.PERPENDICULAR; }
 
-//        else if(hState==HORIZONTAL_STATES.PERPENDICULAR)
-//        {   hState = HORIZONTAL_STATES.REVERESED;}
+        else if(hState==HORIZONTAL_STATES.PERPENDICULAR)
+        {   hState = HORIZONTAL_STATES.REVERESED;}
 
         else
-            if(hState == HORIZONTAL_STATES.PERPENDICULAR)
+            if(hState == HORIZONTAL_STATES.REVERESED)
                 hState = HORIZONTAL_STATES.PARALEL;
 
         clawHRot.setPosition(hState.val);
@@ -75,6 +75,8 @@ public class Claw {
         else
             if(vState == VERTICAL_STATES.DOWN)
             { vState = VERTICAL_STATES.UP;}
+
+
         clawVRot.setPosition(vState.val);
     }
 
