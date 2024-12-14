@@ -38,7 +38,7 @@ public class Claw {
             this.val = val;
         }
     }
-    private enum VERTICAL_STATES{
+    public enum VERTICAL_STATES{
       INIT(0.2) , MIDDLE (0.5),  UP(0.5),DOWN(1);
         double val;
         VERTICAL_STATES(double val) {
@@ -70,13 +70,18 @@ public class Claw {
         clawHRot.setPosition(hState.val);
     }
     public void clawVRotate(){
-        if (vState==VERTICAL_STATES.UP || vState== VERTICAL_STATES.INIT )
+        if (vState==VERTICAL_STATES.UP || vState== VERTICAL_STATES.INIT || vState == VERTICAL_STATES.MIDDLE)
             vState = VERTICAL_STATES.DOWN;
         else
             if(vState == VERTICAL_STATES.DOWN)
             { vState = VERTICAL_STATES.UP;}
 
 
+        clawVRot.setPosition(vState.val);
+    }
+
+    public void clawVRotate(VERTICAL_STATES state){
+        vState = state;
         clawVRot.setPosition(vState.val);
     }
 

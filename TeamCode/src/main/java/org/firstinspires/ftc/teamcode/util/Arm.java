@@ -10,16 +10,24 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.io.PipedInputStream;
+import java.util.Timer;
+
 @Config
 public class Arm implements Updateable{
 
     public DcMotorEx rightArm;
+    public TouchSensor touch;
     public DcMotorEx leftArm;
     public Telemetry telemetry;
-
+    private static boolean resetTimer = false;
+    public ElapsedTime dttimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public int Target=0;
     public int lastTarget = 0;
     public boolean runPid;
@@ -27,13 +35,15 @@ public class Arm implements Updateable{
     public static final double ticks_to_deg = 15.31;
     public static final double initialDeg = -60;
 
-    public static PIDCoefficients pidf_upcoeff = new PIDCoefficients(2.7, 0.15,0.005);
+    public static PIDCoefficients pidf_upcoeff = new PIDCoefficients(3.6, 0.1,0.0045);
    // public static PIDCoefficients pidf_downcoeff = new PIDCoefficients(2.7, 0,d);
 
-    public static PIDCoefficients pidf_midcoeff = new PIDCoefficients(4.5, 0.2 , 0.2);
+    public static PIDCoefficients pidf_midcoeff = new PIDCoefficients(20, 1 , 0.6);
+    public static PIDCoefficients pidf_downmidcoeff = new PIDCoefficients(12,0.4,0.2);
     public static double fUp=0.07, fDown = 0.16 ,kf= 0.01;
     public static PIDFController pidf_upcon  = new PIDFController(pidf_upcoeff);
     public static PIDFController pidf_midcon = new PIDFController(pidf_midcoeff);
+    public static PIDFController pidf_downmidcon = new PIDFController(pidf_downmidcoeff);
     public static PIDFController pidf_con;
     public static VoltageSensor voltage_sensor;
 
@@ -53,11 +63,15 @@ public class Arm implements Updateable{
         rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightArm.setDirection(DcMotorEx.Direction.FORWARD);
-        leftArm.setDirection(DcMotorEx.Direction.REVERSE);
+        rightArm.setDirection(DcMotorEx.Direction.REVERSE);
+        leftArm.setDirection(DcMotorEx.Direction.FORWARD);
+         touch = hardwareMap.get(TouchSensor.class, "touchSensor");
+
         this.telemetry= telemetry;
 
-
+        pidf_midcon.reset();
+        pidf_upcon.reset();
+        pidf_downmidcon.reset();
         pidf_con = pidf_upcon;
         pidf_con.reset();
     }
@@ -71,7 +85,7 @@ public class Arm implements Updateable{
 
     public enum ARM_STATES{
 
-        DOWN(1), UP(2450), MIDDLE(500);
+        DOWN(1), UP(2450), MIDDLE(630);
         public  final int val;
         ARM_STATES(int val){
             this.val=val;
@@ -83,21 +97,25 @@ public class Arm implements Updateable{
         lastTarget= Target;
         Target= pos;
 
-        if(Target== ARM_STATES.MIDDLE.val){
-            pidf_con = pidf_midcon;
+        if(Target==ARM_STATES.MIDDLE.val){
+            if (lastTarget<Target)
+                pidf_con = pidf_midcon;
+            else
+                pidf_con = pidf_downmidcon;
         }
         else pidf_con = pidf_upcon;
 
         pidf_con.setTargetPosition((double)Target/MaxTarget);
         pidf_con.reset();
 
+        resetTimer=false;
 
     }
     double power;
 
     @Override
     public void update(){
-
+        double dt = dttimer.seconds();
         int currentPos = rightArm.getCurrentPosition();
 
         power =pidf_con.update(((double)currentPos/MaxTarget));
@@ -107,6 +125,33 @@ public class Arm implements Updateable{
 //        powerLimits(power);
         leftArm.setPower(power);
         rightArm.setPower(power);
+
+
+        if(Target==1 && currentPos<0 && touch.getValue()==1){
+            if (!resetTimer) {
+                dttimer.reset();
+                resetTimer = true;
+                return;
+            }
+            if (dttimer.seconds()<0.27)
+                return;
+            rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+            rightArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+            rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+            rightArm.setDirection(DcMotorEx.Direction.REVERSE);
+
+            pidf_con=pidf_upcon;
+
+
+            pidf_con.reset();
+
+        }
 
     }
 
