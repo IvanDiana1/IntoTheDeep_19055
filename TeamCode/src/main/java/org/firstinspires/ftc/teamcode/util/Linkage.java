@@ -50,10 +50,4 @@ public class Linkage {
         rightLinkage.setPosition(extendState.val);
     }
 
-
-
-
-
-
-
 }

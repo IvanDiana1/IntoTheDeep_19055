@@ -25,13 +25,13 @@ public class Claw {
 
     }
     private enum HOLD_STATES{
-        HOLD(0.05),RELEASE(0.37);
+        HOLD(0.03),RELEASE(0.37);
         double val;
         HOLD_STATES(double val) {
             this.val = val;
         }
     }
-    private enum HORIZONTAL_STATES {
+    public enum HORIZONTAL_STATES {
         PARALEL(0),PERPENDICULAR(0.5), REVERESED(1);
         double val;
         HORIZONTAL_STATES(double val) {
@@ -39,7 +39,7 @@ public class Claw {
         }
     }
     public enum VERTICAL_STATES{
-      INIT(0.2) , MIDDLE (0.5),  UP(0.5),DOWN(1);
+      INIT(0.25) , MIDDLE (0.525),  UP(0.5),DOWN(1);
         double val;
         VERTICAL_STATES(double val) {
             this.val = val;
@@ -80,9 +80,16 @@ public class Claw {
         clawVRot.setPosition(vState.val);
     }
 
+
+
     public void clawVRotate(VERTICAL_STATES state){
         vState = state;
         clawVRot.setPosition(vState.val);
+    }
+
+    public void clawHRotate(HORIZONTAL_STATES state){
+        hState = state;
+        clawHRot.setPosition(hState.val);
     }
 
     public void printAllData(){

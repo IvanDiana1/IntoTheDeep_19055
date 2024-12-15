@@ -23,15 +23,17 @@ public class TestMechanisms extends LinearOpMode {
 
     public Robot bot;
     public Controller controller1, controller2;
-    public Thread uniqueThread;
-    double weight = 1;
+    double weight = 0;
+    int lifterInitial = 0;
+    int dtlifter=0;
 
     @Override
     public void runOpMode() throws InterruptedException{
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        bot = new Robot ( hardwareMap,  telemetry);
         controller1 = new Controller(gamepad1);
         controller2 = new Controller(gamepad2);
+
+        bot = new Robot (hardwareMap, telemetry);
 
 
 
@@ -40,12 +42,11 @@ public class TestMechanisms extends LinearOpMode {
         while(opModeIsActive()&!isStopRequested()){
 
 
-
             bot.drive.setWeightedDrivePower( new Pose2d(
                    - gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x *1.4,
+                    -gamepad1.left_stick_x,
                     -gamepad1.right_stick_x)
-                    .times(1-(weight*(bot.lifter.currentPos/bot.lifter.MaxRange))));
+                    .times(1-(weight*(bot.lifter.currentPos/(bot.lifter.Target+1)))));
             //slow drive
             if(controller1.bumperRight.isPressed()){
                 weight = 0.5;
@@ -54,9 +55,26 @@ public class TestMechanisms extends LinearOpMode {
                 weight = 0;
             }
 
+            if (Math.abs(controller2.leftStickY)>0.2){
+                if (controller2.leftStickY<0)
+                    dtlifter+=4;
+                else
+                    dtlifter-=4;
+                if (Math.abs(dtlifter)==4)
+                    lifterInitial = bot.arm.getArmPos();
+
+                bot.arm.setTarget(lifterInitial+dtlifter);
+            }
+            else {
+                lifterInitial = 0;
+                dtlifter=0;
+            }
+
 
             if(controller2.triangle.isPressed()&& bot.arm.Target>1){
                 bot.linkage.linkageMove();
+                bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
             }
 
             if(controller1.circle.isPressed())
@@ -107,14 +125,18 @@ public class TestMechanisms extends LinearOpMode {
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
 
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
                 bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 weight = 0;
             }
-            if(controller2.dpadRight.isPressed())
-            {   bot.arm.runPid= true;
+            if(controller2.dpadRight.isPressed()){
                 bot.arm.setTarget(Arm.ARM_STATES.MIDDLE.val);
+              //  bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+
             }
 
+            if(controller2.bumperRight.isPressed())
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.INIT );
 
 
 //            if(controller1.dpadLeft.isPressed()){
@@ -123,18 +145,18 @@ public class TestMechanisms extends LinearOpMode {
 //            }
 
 
-//            if(controller1.triangle.isPressed()){
-//                bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val);
-//                weight = 0.5;
-//            }
 
-//            if(controller1.cross.isPressed()){
-//
-//                bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
-//
-//                bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
-//                weight = 0;
-//            }
+
+            if(controller2.bumperLeft.isPressed()){
+                if (bot.lifter.Target== Lifteer.LIFTER_STATES.UP.val|| bot.lifter.Target== Lifteer.LIFTER_STATES.UP.val+1460)
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
+                else
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val+1460);
+
+                weight = 0;
+            }
+
+
 
 
 

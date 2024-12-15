@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.lib.Controller;
 
 import java.io.PipedInputStream;
 import java.util.Timer;
@@ -27,9 +28,11 @@ public class Arm implements Updateable{
     public DcMotorEx leftArm;
     public Telemetry telemetry;
     private static boolean resetTimer = false;
+    private static boolean extend_once=  false;
     public ElapsedTime dttimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public int Target=0;
     public int lastTarget = 0;
+    int currentPos = 0;
     public boolean runPid;
     public static final int MaxTarget = 2450;
     public static final double ticks_to_deg = 15.31;
@@ -46,8 +49,9 @@ public class Arm implements Updateable{
     public static PIDFController pidf_downmidcon = new PIDFController(pidf_downmidcoeff);
     public static PIDFController pidf_con;
     public static VoltageSensor voltage_sensor;
+    private Linkage linkage;
 
-    public  Arm(HardwareMap hardwareMap, Telemetry telemetry){
+    public  Arm(HardwareMap hardwareMap, Telemetry telemetry, Linkage linkage){
         rightArm = hardwareMap.get(DcMotorEx.class, HardwareConfig.ArmRight);
         leftArm = hardwareMap.get(DcMotorEx.class, HardwareConfig.ArmLeft);
         voltage_sensor = hardwareMap.getAll(VoltageSensor.class).get(0);
@@ -68,11 +72,13 @@ public class Arm implements Updateable{
          touch = hardwareMap.get(TouchSensor.class, "touchSensor");
 
         this.telemetry= telemetry;
+        this.linkage = linkage;
 
         pidf_midcon.reset();
         pidf_upcon.reset();
         pidf_downmidcon.reset();
         pidf_con = pidf_upcon;
+        pidf_con.setTargetPosition(Target);
         pidf_con.reset();
     }
 
@@ -85,7 +91,7 @@ public class Arm implements Updateable{
 
     public enum ARM_STATES{
 
-        DOWN(1), UP(2450), MIDDLE(630);
+        DOWN(1), UP(2450), MIDDLE(624);
         public  final int val;
         ARM_STATES(int val){
             this.val=val;
@@ -109,6 +115,7 @@ public class Arm implements Updateable{
         pidf_con.reset();
 
         resetTimer=false;
+        extend_once = false;
 
     }
     double power;
@@ -116,7 +123,7 @@ public class Arm implements Updateable{
     @Override
     public void update(){
         double dt = dttimer.seconds();
-        int currentPos = rightArm.getCurrentPosition();
+        currentPos = rightArm.getCurrentPosition();
 
         power =pidf_con.update(((double)currentPos/MaxTarget));
 
@@ -125,6 +132,15 @@ public class Arm implements Updateable{
 //        powerLimits(power);
         leftArm.setPower(power);
         rightArm.setPower(power);
+
+        if (pidf_con==pidf_midcon||pidf_con==pidf_downmidcon){
+            if ((currentPos/Target>0.2 && currentPos/Target<3) && !extend_once){
+                extend_once = true;
+                if (!linkage.isExtended)
+                    linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+            }
+
+        }
 
 
         if(Target==1 && currentPos<0 && touch.getValue()==1){
@@ -154,10 +170,13 @@ public class Arm implements Updateable{
         }
 
     }
+    public int getArmPos(){
+        return currentPos;
+    }
 
     public void telemetryData(){
         telemetry.addData("Target: ",Target);
-        telemetry.addData("Rotation: ",rightArm.getCurrentPosition());
+        telemetry.addData("Rotation: ",currentPos);
         telemetry.addData("pow", power);
         //   telemetry.addData("PID: ", current_pid.);
         telemetry.addData("voltage ", voltage_sensor.getVoltage());
