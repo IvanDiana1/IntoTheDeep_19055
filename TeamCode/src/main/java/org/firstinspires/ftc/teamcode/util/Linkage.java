@@ -17,7 +17,7 @@ public class Linkage {
         isExtended = false;
     }
 
-    private enum EXTEND_STATES{
+    public enum EXTEND_STATES{
        CLOSE(0.55), EXTEND(0);
 
        double val;
@@ -37,11 +37,17 @@ public class Linkage {
         leftLinkage.setPosition(extendState.val+dif);
         rightLinkage.setPosition((extendState.val));
     }
+    public void linkageMove(EXTEND_STATES state){
+        if(state==EXTEND_STATES.EXTEND){
+            isExtended = true;
+        }
+        else {
+            isExtended=false;
+        }
+        extendState = state;
 
-
-
-
-
-
+        leftLinkage.setPosition(extendState.val+dif);
+        rightLinkage.setPosition(extendState.val);
+    }
 
 }

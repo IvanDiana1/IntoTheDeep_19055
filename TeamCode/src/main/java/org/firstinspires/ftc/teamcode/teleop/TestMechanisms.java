@@ -12,7 +12,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lib.Controller;
 import org.firstinspires.ftc.teamcode.util.Arm;
+import org.firstinspires.ftc.teamcode.util.Claw;
 import org.firstinspires.ftc.teamcode.util.Lifteer;
+import org.firstinspires.ftc.teamcode.util.Linkage;
 import org.firstinspires.ftc.teamcode.util.Robot;
 
 
@@ -21,15 +23,17 @@ public class TestMechanisms extends LinearOpMode {
 
     public Robot bot;
     public Controller controller1, controller2;
-    public Thread uniqueThread;
-    double weight = 1;
+    double weight = 0;
+    int lifterInitial = 0;
+    int dtlifter=0;
 
     @Override
     public void runOpMode() throws InterruptedException{
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        bot = new Robot ( hardwareMap,  telemetry);
         controller1 = new Controller(gamepad1);
         controller2 = new Controller(gamepad2);
+
+        bot = new Robot (hardwareMap, telemetry);
 
 
 
@@ -38,12 +42,11 @@ public class TestMechanisms extends LinearOpMode {
         while(opModeIsActive()&!isStopRequested()){
 
 
-
             bot.drive.setWeightedDrivePower( new Pose2d(
                    - gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x *1.4,
+                    -gamepad1.left_stick_x,
                     -gamepad1.right_stick_x)
-                    .times(1-(weight*(bot.lifter.currentPos/bot.lifter.MaxRange))));
+                    .times(1-(weight*(bot.lifter.currentPos/(bot.lifter.Target+1)))));
             //slow drive
             if(controller1.bumperRight.isPressed()){
                 weight = 0.5;
@@ -52,70 +55,108 @@ public class TestMechanisms extends LinearOpMode {
                 weight = 0;
             }
 
+            if (Math.abs(controller2.leftStickY)>0.2){
+                if (controller2.leftStickY<0)
+                    dtlifter+=4;
+                else
+                    dtlifter-=4;
+                if (Math.abs(dtlifter)==4)
+                    lifterInitial = bot.arm.getArmPos();
 
-            if(controller2.triangle.isPressed()){
-                bot.linkage.linkageMove();
+                bot.arm.setTarget(lifterInitial+dtlifter);
+            }
+            else {
+                lifterInitial = 0;
+                dtlifter=0;
             }
 
-            if(controller2.circle.isPressed())
+
+            if(controller2.triangle.isPressed()&& bot.arm.Target>1){
+                bot.linkage.linkageMove();
+                bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+            }
+
+            if(controller1.circle.isPressed())
             {  bot.claw.clawCatch(); }
 
-            if(controller2.dpadUp.isPressed())
+            if(controller2.cross.isPressed()&& bot.arm.Target>1)
             {
                 bot.claw.clawHRotate();
             }
 
-            if(controller2.dpadDown.isPressed()){
-                bot.claw.clawVRotate();
+            if(controller2.circle.isPressed()){
+                if (bot.arm.Target==0)
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                else if(bot.arm.Target>1)
+                    bot.claw.clawVRotate();
             }
 
-            if(controller1.dpadUp.isPressed()){
+            if(controller2.dpadLeft.isPressed()){
              bot.arm.setTarget(Arm.ARM_STATES.UP.val);
-//             bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val);
-             //weight = 0.5;
+
+             bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+             bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
 
 
             }
-            if(controller1.square.isPressed()){
+            if(controller2.dpadUp.isPressed()){
                 bot.arm.setTarget(Arm.ARM_STATES.UP.val);
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val);
+
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+                bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 weight = 0.5;
 
 
             }
-            if(controller1.dpadDown.isPressed()){
-
-                bot.arm.setTarget(Arm.ARM_STATES.DOWN.val);
-//                bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
-             //   weight = 0;
-            }
-            if(controller1.circle.isPressed()){
+//            if(controller1.dpadDown.isPressed()){
+//
+//                bot.arm.setTarget(Arm.ARM_STATES.DOWN.val);
+//                bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
+//                bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+//
+////                bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+//             //   weight = 0;
+//            }
+            if(controller2.dpadDown.isPressed()){
 
                 bot.arm.setTarget(Arm.ARM_STATES.DOWN.val);
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
+                bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 weight = 0;
             }
-            if(controller1.dpadRight.isPressed())
-            {   bot.arm.runPid= true;
+            if(controller2.dpadRight.isPressed()){
                 bot.arm.setTarget(Arm.ARM_STATES.MIDDLE.val);
-            }
-
-            if(controller1.dpadLeft.isPressed()){
-               bot.arm.runPid= false;
+              //  bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
 
             }
 
+            if(controller2.bumperRight.isPressed())
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.INIT );
 
-            if(controller1.triangle.isPressed()){
-                bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val);
-                weight = 0.5;
-            }
 
-            if(controller1.cross.isPressed()){
+//            if(controller1.dpadLeft.isPressed()){
+//               bot.arm.runPid= false;
+//
+//            }
 
-                bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+
+
+
+            if(controller2.bumperLeft.isPressed()){
+                if (bot.lifter.Target== Lifteer.LIFTER_STATES.UP.val|| bot.lifter.Target== Lifteer.LIFTER_STATES.UP.val+1460)
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
+                else
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val+1460);
+
                 weight = 0;
             }
+
+
 
 
 
