@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Linkage {
     private Servo leftLinkage, rightLinkage;
     private EXTEND_STATES extendState = EXTEND_STATES.CLOSE;
-    private double dif = 0.04;
-    boolean isExtended;
+    private double dif = 0.02;
     public Linkage(HardwareMap hwmap ){
 
         leftLinkage = hwmap.get(Servo.class, HardwareConfig.LeftLinkage);
@@ -14,11 +13,10 @@ public class Linkage {
 
         leftLinkage.setPosition(extendState.val+dif);
         rightLinkage.setPosition(extendState.val);
-        isExtended = false;
     }
 
     public enum EXTEND_STATES{
-       CLOSE(0.55), EXTEND(0);
+       CLOSE(0.49), EXTEND(0), MIDDLE(0.2);
 
        double val;
        EXTEND_STATES(double val){
@@ -28,22 +26,16 @@ public class Linkage {
     }
 
     public void linkageMove() {
-        if(isExtended==false){
+        if(extendState==EXTEND_STATES.CLOSE){
             extendState=EXTEND_STATES.EXTEND;
-            isExtended = true;
         }
-        else {extendState=EXTEND_STATES.CLOSE;
-            isExtended=false;}
+        else {
+            extendState=EXTEND_STATES.CLOSE;
+        }
         leftLinkage.setPosition(extendState.val+dif);
         rightLinkage.setPosition((extendState.val));
     }
     public void linkageMove(EXTEND_STATES state){
-        if(state==EXTEND_STATES.EXTEND){
-            isExtended = true;
-        }
-        else {
-            isExtended=false;
-        }
         extendState = state;
 
         leftLinkage.setPosition(extendState.val+dif);

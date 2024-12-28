@@ -9,23 +9,21 @@ public class Claw {
     private Servo clawHold, clawHRot, clawVRot;
     private Telemetry telemetry;
     private  HOLD_STATES holdState = HOLD_STATES.HOLD;
-    private  VERTICAL_STATES vState = VERTICAL_STATES.INIT;
+    private  VERTICAL_STATES vState = VERTICAL_STATES.UP;
     private  HORIZONTAL_STATES hState = HORIZONTAL_STATES.PARALEL;
-    boolean isClawClosed;
 
     public Claw(HardwareMap hwmap, Telemetry telemetry){
         clawHold = hwmap.get(Servo.class, HardwareConfig.ClawHold);
         clawHRot = hwmap.get(Servo.class, HardwareConfig.ClawHRotation);
         clawVRot = hwmap.get(Servo.class, HardwareConfig.ClawVRotation);
 
-        clawHold.setPosition(HOLD_STATES.HOLD.val);
-        isClawClosed = true;
-        clawHRot.setPosition(HORIZONTAL_STATES.PARALEL.val);
-        clawVRot.setPosition(VERTICAL_STATES.INIT.val);
+        clawHold.setPosition(holdState.val);
+        clawHRot.setPosition(hState.val);
+        clawVRot.setPosition(vState.val);
 
     }
-    private enum HOLD_STATES{
-        HOLD(0.03),RELEASE(0.37);
+    public enum HOLD_STATES{
+        HOLD(0.42),RELEASE(0.15);
         double val;
         HOLD_STATES(double val) {
             this.val = val;
@@ -39,48 +37,43 @@ public class Claw {
         }
     }
     public enum VERTICAL_STATES{
-      INIT(0.25) , MIDDLE (0.525),  UP(0.5),DOWN(1);
+      UP(1),DOWN(0.22),  LOWMID(0.26),  HIGHMID(0.64),   MIDDLE(0.6);
         double val;
         VERTICAL_STATES(double val) {
             this.val = val;
         }
     }
     public void clawCatch(){
-        if (isClawClosed==true)
-        { holdState = HOLD_STATES.RELEASE;
-            isClawClosed = false;}
-        else
-        if(isClawClosed==false)
-        {   holdState = HOLD_STATES.HOLD;
-            isClawClosed = true;}
+        if (holdState==HOLD_STATES.HOLD)
+            holdState = HOLD_STATES.RELEASE;
+        else if(holdState==HOLD_STATES.RELEASE)
+           holdState = HOLD_STATES.HOLD;
         clawHold.setPosition(holdState.val);
     }
     public void clawHRotate(){
         // paralel -> perpendicular - > reversed
         if (hState==HORIZONTAL_STATES.PARALEL)
-        {   hState = HORIZONTAL_STATES.PERPENDICULAR; }
+            hState = HORIZONTAL_STATES.PERPENDICULAR;
 
         else if(hState==HORIZONTAL_STATES.PERPENDICULAR)
-        {   hState = HORIZONTAL_STATES.REVERESED;}
-
-        else
-            if(hState == HORIZONTAL_STATES.REVERESED)
-                hState = HORIZONTAL_STATES.PARALEL;
+            hState = HORIZONTAL_STATES.PARALEL;
 
         clawHRot.setPosition(hState.val);
     }
     public void clawVRotate(){
-        if (vState==VERTICAL_STATES.UP || vState== VERTICAL_STATES.INIT || vState == VERTICAL_STATES.MIDDLE)
+        if (vState==VERTICAL_STATES.UP)
             vState = VERTICAL_STATES.DOWN;
-        else
-            if(vState == VERTICAL_STATES.DOWN)
-            { vState = VERTICAL_STATES.UP;}
+        else if (vState==VERTICAL_STATES.DOWN|| vState ==   VERTICAL_STATES.MIDDLE)
+            vState = VERTICAL_STATES.UP;
 
 
         clawVRot.setPosition(vState.val);
     }
 
-
+    public void clawCatch(HOLD_STATES state){
+        holdState = state;
+        clawHold.setPosition(holdState.val);
+    }
 
     public void clawVRotate(VERTICAL_STATES state){
         vState = state;

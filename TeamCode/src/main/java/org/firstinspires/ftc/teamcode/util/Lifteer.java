@@ -18,9 +18,9 @@ public class Lifteer implements Updateable{
 
     public Telemetry telemetry;
     public int Target;
-    public int MaxRange=1720;
+    public int MaxRange=4000;
     public int currentPos=0;
-    private static double p=12 , i =0.4 , d =0.07;
+    private static double p=17 , i =0.4 , d =0.1;
 
 
     public static PIDCoefficients pidLift = new PIDCoefficients (p , i , d) ;
@@ -51,7 +51,7 @@ public class Lifteer implements Updateable{
     }
 
     public enum LIFTER_STATES{
-       DOWN(0), UP(1720), MIDDLE(1500);
+       DOWN(0), UP(4000), MIDDLE(2000);
        public final int val;
        LIFTER_STATES(int val){
            this.val = val;
@@ -72,7 +72,7 @@ public class Lifteer implements Updateable{
 
         currentPos = rlifter.getCurrentPosition();
 
-        double power =pidCLift.update(((double)currentPos/MaxRange))*(14/ voltage_sensor.getVoltage());
+        double power =pidCLift.update(((double)currentPos/MaxRange))*(12/ voltage_sensor.getVoltage());
         llifter.setPower(power);
         rlifter.setPower(power);
 
