@@ -51,7 +51,7 @@ public class Lifteer implements Updateable{
     }
 
     public enum LIFTER_STATES{
-       DOWN(0), UP(4000), MIDDLE(2000);
+       DOWN(0), UP(4000), MIDDLE(2000), LOWMID(400);
        public final int val;
        LIFTER_STATES(int val){
            this.val = val;
