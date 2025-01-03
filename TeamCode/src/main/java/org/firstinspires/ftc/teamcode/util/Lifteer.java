@@ -87,6 +87,13 @@ public class Lifteer implements Updateable{
         //   telemetry.addData("PID: ", current_pid.);
 
     }
+
+    public void float_motors(){
+        rlifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        llifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+    }
+
     public boolean isBusy(){
        return (Math.abs(currentPos - Target) > 55);
     }

@@ -53,7 +53,7 @@ public class SampleAutoTest extends LinearOpMode {
 
      spikeMarks[0] = bot.drive.trajectorySequenceBuilder(startPhase[0].end())
              //spike mark 1
-             .addSpatialMarker(new Vector2d(20, 22), () -> {
+             .addSpatialMarker(new Vector2d(19, 21), () -> {
                  bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
                  bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.TILTED);
                  sleep(300);
@@ -63,9 +63,9 @@ public class SampleAutoTest extends LinearOpMode {
                  bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                  bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
              })
-             .lineToLinearHeading(new Pose2d(19.5, 23, Math.toRadians(30)))
-             .lineToLinearHeading(new Pose2d(17, 40, Math.toRadians(160)))
-             .addTemporalMarker(0.45 , 0.1 , ()->{
+             .lineToLinearHeading(new Pose2d(19.5, 22 , Math.toRadians(30)))
+             .lineToLinearHeading(new Pose2d(17, 38, Math.toRadians(160)))
+             .addTemporalMarker(0.45 , 0.1, ()->{
                  bot.claw.clawVRotate(Claw.VERTICAL_STATES.HIGHMID);
                  bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val);
 
@@ -83,41 +83,38 @@ public class SampleAutoTest extends LinearOpMode {
                  bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
                  sleep(250);
                  bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
-                 sleep(250);
+                 sleep(300);
                  bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
                  sleep(100);
-                 bot.claw.clawCatch(Claw.HOLD_STATES.HOLD_STRONGER);
                  bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
                  sleep(250);
                  bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                  bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val);
 
              })
-             .setAccelConstraint(new ProfileAccelerationConstraint(25))
-             .setVelConstraint(new MecanumVelocityConstraint(25, 9.65))
 
              .lineToLinearHeading(new Pose2d(20, 42, Math.toRadians(0)))
              .setAccelConstraint(new ProfileAccelerationConstraint(3.5))
              .setVelConstraint(new MecanumVelocityConstraint(15, 9.65))
              .lineToLinearHeading(new Pose2d(17, 40, Math.toRadians(-160)))
-             .lineToLinearHeading(new Pose2d(17.5 , 40.5, Math.toRadians(-210)))
+             .lineToLinearHeading(new Pose2d(14.5 , 40.5, Math.toRadians(-210)))
              .build();
 
      spikeMarks[2] = bot.drive.trajectorySequenceBuilder(spikeMarks[1].end())
              //spike mark 1
 
 
-             .lineToLinearHeading(new Pose2d(22, 41, Math.toRadians(35)))
+             .lineToLinearHeading(new Pose2d(22, 40.7, Math.toRadians(35)))
              .build();
      spikeMarksEnd[0] = bot.drive.trajectorySequenceBuilder(spikeMarks[2].end())
 
-             .lineToLinearHeading(new Pose2d(17, 34, Math.toRadians(-210)))
+             .lineToLinearHeading(new Pose2d(14, 34, Math.toRadians(-210)))
              .build();
      park[0] = bot.drive.trajectorySequenceBuilder(spikeMarksEnd[0].end())
              .addTemporalMarker(0.35,0.1, () -> {
-                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val-300);
+                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val-100);
              } )
-             .lineToLinearHeading(new Pose2d(60,15,Math.toRadians(-90)))
+             .lineToLinearHeading(new Pose2d(50,10,Math.toRadians(-90)))
              .build();
  }
 
@@ -242,8 +239,8 @@ public class SampleAutoTest extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
-
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.lifter.float_motors();
         sleep (2000);
 
         bot.lifter.update();
