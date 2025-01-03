@@ -98,6 +98,7 @@ public class SpecimenAutoClaw extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         bot.Init(hardwareMap, telemetry);
+        bot.lifter.setAutoPos(0);
         waitForStart();
         buildTrajectories();
         if(isStopRequested()) return;

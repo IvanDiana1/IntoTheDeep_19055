@@ -86,6 +86,7 @@ public class SampleAutoTest extends LinearOpMode {
                  sleep(250);
                  bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
                  sleep(100);
+                 bot.claw.clawCatch(Claw.HOLD_STATES.HOLD_STRONGER);
                  bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
                  sleep(250);
                  bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
@@ -110,9 +111,12 @@ public class SampleAutoTest extends LinearOpMode {
              .build();
      spikeMarksEnd[0] = bot.drive.trajectorySequenceBuilder(spikeMarks[2].end())
 
-             .lineToLinearHeading(new Pose2d(17, 36, Math.toRadians(-210)))
+             .lineToLinearHeading(new Pose2d(17, 34, Math.toRadians(-210)))
              .build();
      park[0] = bot.drive.trajectorySequenceBuilder(spikeMarksEnd[0].end())
+             .addTemporalMarker(0.35,0.1, () -> {
+                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val-300);
+             } )
              .lineToLinearHeading(new Pose2d(60,15,Math.toRadians(-90)))
              .build();
  }
@@ -220,6 +224,27 @@ public class SampleAutoTest extends LinearOpMode {
         sleep(200);
         bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
         bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
+
+        bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
+        bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
+        bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+
+        uniqueThread = new Thread(() -> {
+            while (bot.lifter.isBusy() && !uniqueThread.isInterrupted()){
+                bot.lifter.update();
+            }
+        });
+
+        bot.drive.followTrajectorySequenceAsync(park[0]);
+        while (((bot.lifter.isBusy()||bot.drive.isBusy()) && !isStopRequested())) {
+            bot.drive.update();
+            telemetry.addData("er", bot.drive.getLastError());
+            bot.lifter.update();
+            telemetry.update();
+        }
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
+
+        sleep (2000);
 
         bot.lifter.update();
         bot.lifter.setAutoPos(bot.lifter.currentPos);
