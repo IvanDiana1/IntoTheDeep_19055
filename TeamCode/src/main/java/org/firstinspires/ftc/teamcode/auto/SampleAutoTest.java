@@ -64,7 +64,7 @@ public class SampleAutoTest extends LinearOpMode {
                  bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
              })
              .lineToLinearHeading(new Pose2d(19.5, 22 , Math.toRadians(30)))
-             .lineToLinearHeading(new Pose2d(17, 38, Math.toRadians(160)))
+             .lineToLinearHeading(new Pose2d(17, 40, Math.toRadians(160)))
              .addTemporalMarker(0.45 , 0.1, ()->{
                  bot.claw.clawVRotate(Claw.VERTICAL_STATES.HIGHMID);
                  bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val);
@@ -104,7 +104,7 @@ public class SampleAutoTest extends LinearOpMode {
              //spike mark 1
 
 
-             .lineToLinearHeading(new Pose2d(22, 40.7, Math.toRadians(35)))
+             .lineToLinearHeading(new Pose2d(22, 41, Math.toRadians(35)))
              .build();
      spikeMarksEnd[0] = bot.drive.trajectorySequenceBuilder(spikeMarks[2].end())
 
@@ -239,6 +239,8 @@ public class SampleAutoTest extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
+        uniqueThread.interrupt();
+
         bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
         bot.lifter.float_motors();
         sleep (2000);

@@ -21,6 +21,7 @@ public class Lifteer implements Updateable{
     public int MaxRange=4100;
     public int currentPos=0;
     public static int autoPos = 0;
+    private static boolean runPID = true;
     private static double p=17 , i =0.4 , d =0.1;
 
 
@@ -48,6 +49,8 @@ public class Lifteer implements Updateable{
         llifter.setDirection(DcMotorEx.Direction.REVERSE);
         this.telemetry= telemetry;
 
+        runPID = true;
+
         pidCLift = new PIDFController(pidLift);
     }
 
@@ -73,6 +76,9 @@ public class Lifteer implements Updateable{
 
         currentPos = rlifter.getCurrentPosition()+autoPos;
 
+        if(!runPID)
+            return;
+
         double power =pidCLift.update(((double)currentPos/MaxRange))*(12/ voltage_sensor.getVoltage());
         llifter.setPower(power);
         rlifter.setPower(power);
@@ -91,7 +97,9 @@ public class Lifteer implements Updateable{
     public void float_motors(){
         rlifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         llifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
+        runPID = false;
+        rlifter.setPower(0);
+        llifter.setPower(0);
     }
 
     public boolean isBusy(){
