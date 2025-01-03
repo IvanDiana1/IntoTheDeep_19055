@@ -3,16 +3,10 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.Claw;
 import org.firstinspires.ftc.teamcode.util.Lifteer;
@@ -22,9 +16,11 @@ import org.firstinspires.ftc.teamcode.util.Robot;
 @Autonomous
 public class SpecimenAutoClawTest extends LinearOpMode {
     Robot bot = new Robot();
+    private TrajectorySequence lastraj;
+    private static final double dist_between_specimens = 2;
     public static TrajectorySequence startPhase[] = new TrajectorySequence[1], spikeMarks[] = new TrajectorySequence[4] , place[] = new TrajectorySequence[3] , collect[] = new TrajectorySequence[1];
-
-
+    public static Pose2d marksPosFence[] = new  Pose2d[3] ;
+    public static Pose2d marksPosWall[] = new Pose2d[3];
 
     public void collectFromWall(){
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
@@ -33,23 +29,38 @@ public class SpecimenAutoClawTest extends LinearOpMode {
         sleep(150);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
     }
-    public void place(){
+    public void placeSpecimen(int casee){
+
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-        sleep(300);
-        bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+        sleep(280);
+        if (casee<2)
+            bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
+        else
+            bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+
+
         bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-        sleep(100);
-        bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+        if(casee<2||casee==3){
+            sleep(80);
+            bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+        }
     }
 
-    public void buildTrajectories() {
-        startPhase[0] = bot.drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+    public void buildTrajectories(double voltage) {
+        marksPosFence[0] = new Pose2d(15,2,  Math.toRadians(5));
+        marksPosFence[1] = new Pose2d(15.8,4,Math.toRadians(2));
+        marksPosFence[2] = new Pose2d(16.9,0,Math.toRadians(-1));
+
+        marksPosWall[0] = new Pose2d(13.7 ,-31.5,Math.toRadians(-172));
+        marksPosWall[1] = new Pose2d(13.25,-32.1,Math.toRadians(-177));
+        marksPosWall[2] = new Pose2d(11.8,-32.8,Math.toRadians(-150));
+        startPhase[0] = bot.drive.trajectorySequenceBuilder(new Pose2d(-0.2, 0, Math.toRadians(0)))
                 .addSpatialMarker(new Vector2d(0, 0), () -> {
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
                 })
                 .addTemporalMarker(2400, () -> {
-                    place();
+                    placeSpecimen(3);
                 })
                 .forward(16)
                 .build();
@@ -59,7 +70,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
                     sleep(300);
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
-                    sleep(300);
+                    sleep(200);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                 })
                 .lineToLinearHeading(new Pose2d(23, -31, Math.toRadians(-30)))
@@ -82,88 +93,57 @@ public class SpecimenAutoClawTest extends LinearOpMode {
                 .build();
         spikeMarks[2] = bot.drive.trajectorySequenceBuilder(spikeMarks[1].end())
 
-                .lineToLinearHeading(new Pose2d(25.5, -52, Math.toRadians(-25)))
+                .lineToLinearHeading(new Pose2d(25.23, -52., Math.toRadians(-25)))
 
                 .build();
 
         spikeMarks[3] = bot.drive.trajectorySequenceBuilder(spikeMarks[2].end())
-                .addTemporalMarker(600, ()->{
+                .addTemporalMarker(600, () -> {
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                    bot.lifter.setTarget(400);
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                     sleep(150);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
                 })
-                .lineToLinearHeading(new Pose2d (14.2 , - 31.5 , Math.toRadians(-172)))
+                .lineToLinearHeading(new Pose2d(14.2, -31.5, Math.toRadians(-172)))
                 .build();
 
+        lastraj = spikeMarks[3];
+
+        for (int i=0;i<=2;i++) {
+            int finalI = i;
+
+            place[i] = bot.drive.trajectorySequenceBuilder(lastraj.end())
+                    .lineToLinearHeading(marksPosFence[i])
+
+                    .addTemporalMarker(0.07, 0.08, () ->
+                            {
+                                bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
+                                bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                            }
+                    )
+                    .lineToLinearHeading(marksPosWall[i])
+
+                    .addTemporalMarker(0.4, 0.1, () -> {
+
+                        placeSpecimen(finalI);
+                    })
 
 
-
-        place[0] = bot.drive.trajectorySequenceBuilder(spikeMarks[3].end())
-                .lineToLinearHeading( new Pose2d( 17.4 , -3 , Math.toRadians(5)))
-                .addSpatialMarker(new Vector2d( 16, -18), () ->
-                {   bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                })
-
-                .addTemporalMarker(2400, () -> {
-                   place();
-                })
-                .lineToLinearHeading(new Pose2d (14.2 , - 31.5 , Math.toRadians(-172)))
-                .addTemporalMarker(3600, ()->{
-                   collectFromWall();
-                })
-
-
-
-                .build();
-        place[1] = bot.drive.trajectorySequenceBuilder(place[0].end())
-                .lineToLinearHeading( new Pose2d( 17.4 , -4 , Math.toRadians(5)))
-                .addSpatialMarker(new Vector2d( 16, -18), () ->
-                {   bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                })
-
-                .addTemporalMarker(2400, () -> {
-                    place();
-                })
-                .lineToLinearHeading(new Pose2d (14.2 , - 31.5 , Math.toRadians(-172)))
-                .addTemporalMarker(3600, ()->{
-                    collectFromWall();
-                })
-
-
-
-                .build();
-        place[2] = bot.drive.trajectorySequenceBuilder(place[1].end())
-                .lineToLinearHeading( new Pose2d( 17.4 , -5 , Math.toRadians(5)))
-                .addSpatialMarker(new Vector2d( 16, -18), () ->
-                {   bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                })
-
-                .addTemporalMarker(2400, () -> {
-                    place();
-                })
-                .lineToLinearHeading(new Pose2d (14.2 , - 31.5 , Math.toRadians(-172)))
-                .addTemporalMarker(3600, ()->{
-                    collectFromWall();
-                })
-
-
-
-                .build();
-
-
+                    .build();
+            lastraj = place[i];
+        }
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
         bot.Init(hardwareMap, telemetry);
+        buildTrajectories(bot.voltage_sensor.getVoltage());
+
         waitForStart();
-        buildTrajectories();
+
         if(isStopRequested()) return;
-        bot.drive.setPoseEstimate(new Pose2d(0,0,Math.toRadians(0)));
+
+        bot.drive.setPoseEstimate(new Pose2d(-0.2,0,Math.toRadians(0)));
         bot.drive.followTrajectorySequenceAsync(startPhase[0]);
 
         while ((bot.drive.isBusy() && !isStopRequested())) {
@@ -203,6 +183,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
+
         bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
         sleep(400);
@@ -224,35 +205,16 @@ public class SpecimenAutoClawTest extends LinearOpMode {
             telemetry.update();
         }
         bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-        collectFromWall();
-        bot.drive.followTrajectorySequenceAsync(place[0]);
 
-
-        while ((bot.drive.isBusy() && !isStopRequested())) {
-            bot.drive.update();
-            telemetry.addData("er", bot.drive.getLastError());
-            bot.lifter.update();
-            telemetry.update();
-        }
-        bot.drive.followTrajectorySequenceAsync(place[1]);
-
-
-        while ((bot.drive.isBusy() && !isStopRequested())) {
-            bot.drive.update();
-            telemetry.addData("er", bot.drive.getLastError());
-            bot.lifter.update();
-            telemetry.update();
-        }
-
-
-        bot.drive.followTrajectorySequenceAsync(place[2]);
-
-
-        while ((bot.drive.isBusy() && !isStopRequested())) {
-            bot.drive.update();
-            telemetry.addData("er", bot.drive.getLastError());
-            bot.lifter.update();
-            telemetry.update();
+        for (int i=0;i<=2;i++) {
+            collectFromWall();
+            bot.drive.followTrajectorySequenceAsync(place[i]);
+            while ((bot.drive.isBusy() && !isStopRequested())) {
+                bot.drive.update();
+                telemetry.addData("er", bot.drive.getLastError());
+                bot.lifter.update();
+                telemetry.update();
+            }
         }
         telemetry.addLine("c'est fini");
         telemetry.addData("timp: ",getRuntime());

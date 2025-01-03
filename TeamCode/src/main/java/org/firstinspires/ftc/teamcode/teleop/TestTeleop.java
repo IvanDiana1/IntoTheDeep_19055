@@ -37,6 +37,7 @@ public class TestTeleop extends LinearOpMode {
         controller1 = new Controller(gamepad1);
         controller2 = new Controller(gamepad2);
         bot.Init(hardwareMap,telemetry);
+        bot.lifter.setTarget(Lifteer.autoPos);
         waitForStart();
         bot.claw.clawCatch();
 //        bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);

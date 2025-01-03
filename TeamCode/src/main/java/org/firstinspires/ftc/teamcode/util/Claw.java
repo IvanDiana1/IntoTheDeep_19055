@@ -23,14 +23,14 @@ public class Claw {
 
     }
     public enum HOLD_STATES{
-        HOLD(0.42),RELEASE(0.15);
+        HOLD(0.42),RELEASE(0.15) , HOLD_STRONGER(0.5);
         double val;
         HOLD_STATES(double val) {
             this.val = val;
         }
     }
     public enum HORIZONTAL_STATES {
-        PARALEL(0),PERPENDICULAR(0.5), REVERESED(1);
+        PARALEL(0),PERPENDICULAR(0.5), REVERESED(1),TILTED(0.2);
         double val;
         HORIZONTAL_STATES(double val) {
             this.val = val;

@@ -16,7 +16,7 @@ public class Linkage {
     }
 
     public enum EXTEND_STATES{
-       CLOSE(0.49), EXTEND(0), MIDDLE(0.2);
+       CLOSE(0.49), EXTEND(0), MIDDLE(0.2) , HIGHMID(0.1);
 
        double val;
        EXTEND_STATES(double val){
