@@ -23,11 +23,15 @@ public class SpecimenAutoClawTest extends LinearOpMode {
     public static Pose2d marksPosWall[] = new Pose2d[3];
 
     public void collectFromWall(){
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        sleep(100);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-        sleep(250);
+        sleep(400);
         bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
-        sleep(150);
+        sleep(200);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+        sleep(100);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
     }
     public void placeSpecimen(int casee){
 
@@ -40,20 +44,26 @@ public class SpecimenAutoClawTest extends LinearOpMode {
 
 
         bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-        if(casee<2||casee==3){
+        if(casee<2){
+            sleep(80);
+            bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+            bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
+            bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
+        }
+        else if(casee==3){
             sleep(80);
             bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
         }
     }
 
     public void buildTrajectories(double voltage) {
-        marksPosFence[0] = new Pose2d(15,2,  Math.toRadians(5));
-        marksPosFence[1] = new Pose2d(15.8,4,Math.toRadians(2));
-        marksPosFence[2] = new Pose2d(16.9,0,Math.toRadians(-1));
+        marksPosFence[0] = new Pose2d(14.2,-4,  Math.toRadians(-5));
+        marksPosFence[1] = new Pose2d(14.2,-2,Math.toRadians(1));
+        marksPosFence[2] = new Pose2d(14.5,-7,Math.toRadians(-1));
 
-        marksPosWall[0] = new Pose2d(13.7 ,-31.5,Math.toRadians(-172));
-        marksPosWall[1] = new Pose2d(13.25,-32.1,Math.toRadians(-177));
-        marksPosWall[2] = new Pose2d(11.8,-32.8,Math.toRadians(-150));
+        marksPosWall[0] = new Pose2d(12.7 ,-31.5,Math.toRadians(-172));
+        marksPosWall[1] = new Pose2d(11.7,-32.1,Math.toRadians(-177));
+        marksPosWall[2] = new Pose2d(10.4,-32.8,Math.toRadians(-150));
         startPhase[0] = bot.drive.trajectorySequenceBuilder(new Pose2d(-0.2, 0, Math.toRadians(0)))
                 .addSpatialMarker(new Vector2d(0, 0), () -> {
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
@@ -104,7 +114,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
                     sleep(150);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
                 })
-                .lineToLinearHeading(new Pose2d(14.2, -31.5, Math.toRadians(-172)))
+                .lineToLinearHeading(new Pose2d(14, -31.5, Math.toRadians(-172)))
                 .build();
 
         lastraj = spikeMarks[3];
@@ -137,13 +147,15 @@ public class SpecimenAutoClawTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         bot.Init(hardwareMap, telemetry);
+        bot.lifter.set_motorsResetable(false);
+
         buildTrajectories(bot.voltage_sensor.getVoltage());
 
         waitForStart();
 
         if(isStopRequested()) return;
 
-        bot.drive.setPoseEstimate(new Pose2d(-0.2,0,Math.toRadians(0)));
+        bot.drive.setPoseEstimate(new Pose2d(0.1,0,Math.toRadians(0)));
         bot.drive.followTrajectorySequenceAsync(startPhase[0]);
 
         while ((bot.drive.isBusy() && !isStopRequested())) {

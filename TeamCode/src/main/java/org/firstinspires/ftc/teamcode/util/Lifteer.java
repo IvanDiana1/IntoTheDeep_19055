@@ -18,11 +18,12 @@ public class Lifteer implements Updateable{
 
     public Telemetry telemetry;
     public int Target;
-    public int MaxRange=4100;
+    public static int MaxRange=4250;
     public int currentPos=0;
+    private boolean motors_resetable;
     public static int autoPos = 0;
     private static boolean runPID = true;
-    private static double p=17 , i =0.4 , d =0.1;
+    private static double p=30 , i =0.3 , d =1;
 
 
     public static PIDCoefficients pidLift = new PIDCoefficients (p , i , d) ;
@@ -50,12 +51,13 @@ public class Lifteer implements Updateable{
         this.telemetry= telemetry;
 
         runPID = true;
+        motors_resetable = true;
 
         pidCLift = new PIDFController(pidLift);
     }
 
-    public enum LIFTER_STATES{
-       DOWN(0), UP(4100), MIDDLE(2000), LOWMID(400);
+    public static enum LIFTER_STATES{
+       DOWN(0), UP(4250), MIDDLE(2050), AGATATED(1550), LOWMID(450);
        public final int val;
        LIFTER_STATES(int val){
            this.val = val;
@@ -82,13 +84,16 @@ public class Lifteer implements Updateable{
         double power =pidCLift.update(((double)currentPos/MaxRange))*(12/ voltage_sensor.getVoltage());
         llifter.setPower(power);
         rlifter.setPower(power);
+        telemetryData();
+
+        if(Target == 0 && !isBusy() && Math.abs(currentPos)>5 && motors_resetable ) reset_motors();
 
     }
 
 
     public void telemetryData(){
        telemetry.addData(" LIFTER Target: ",Target);
-        telemetry.addData("LIFTER POS: ",currentPos);
+        telemetry.addData("LIFTER POS: ",rlifter.getCurrentPosition());
        // telemetry.addData("pow", power);
         //   telemetry.addData("PID: ", current_pid.);
 
@@ -102,8 +107,28 @@ public class Lifteer implements Updateable{
         llifter.setPower(0);
     }
 
+    public void reset_motors(){
+        rlifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        llifter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        rlifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        llifter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        rlifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        llifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rlifter.setDirection(DcMotorEx.Direction.FORWARD);
+        llifter.setDirection(DcMotorEx.Direction.REVERSE);
+    }
+
+    public void set_motorsResetable(boolean val){
+        motors_resetable = val;
+    }
+
     public boolean isBusy(){
-       return (Math.abs(currentPos - Target) > 55);
+       return (Math.abs(currentPos - Target) > 50);
     }
     public void setAutoPos(int pos){
         autoPos = pos;
