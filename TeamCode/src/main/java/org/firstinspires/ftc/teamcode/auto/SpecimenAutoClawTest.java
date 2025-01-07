@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -18,25 +20,25 @@ public class SpecimenAutoClawTest extends LinearOpMode {
     Robot bot = new Robot();
     private TrajectorySequence lastraj;
     private static final double dist_between_specimens = 2;
-    public static TrajectorySequence startPhase[] = new TrajectorySequence[1], spikeMarks[] = new TrajectorySequence[4] , place[] = new TrajectorySequence[3] , collect[] = new TrajectorySequence[1];
+    public static TrajectorySequence park[] = new TrajectorySequence[2] ,startPhase[] = new TrajectorySequence[1], spikeMarks[] = new TrajectorySequence[4] , place[] = new TrajectorySequence[3] , collect[] = new TrajectorySequence[1];
     public static Pose2d marksPosFence[] = new  Pose2d[3] ;
     public static Pose2d marksPosWall[] = new Pose2d[3];
 
     public void collectFromWall(){
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-        sleep(100);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-        sleep(400);
-        bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
+        sleep(300);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
         sleep(200);
+        bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
+        sleep(350);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
-        sleep(100);
+        sleep(300);
         bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
     }
     public void placeSpecimen(int casee){
 
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-        sleep(280);
+        sleep(360);
         if (casee<2)
             bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
         else
@@ -48,7 +50,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
             sleep(80);
             bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
             bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-            bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
+            bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
         }
         else if(casee==3){
             sleep(80);
@@ -57,13 +59,13 @@ public class SpecimenAutoClawTest extends LinearOpMode {
     }
 
     public void buildTrajectories(double voltage) {
-        marksPosFence[0] = new Pose2d(14.2,-4,  Math.toRadians(-5));
-        marksPosFence[1] = new Pose2d(14.2,-2,Math.toRadians(1));
-        marksPosFence[2] = new Pose2d(14.5,-7,Math.toRadians(-1));
+        marksPosFence[0] = new Pose2d(17,-4,  Math.toRadians(0));
+        marksPosFence[1] = new Pose2d(17.5,-2,Math.toRadians(-10));
+        marksPosFence[2] = new Pose2d(19.5,-7,Math.toRadians(-20));
 
-        marksPosWall[0] = new Pose2d(12.7 ,-31.5,Math.toRadians(-172));
-        marksPosWall[1] = new Pose2d(11.7,-32.1,Math.toRadians(-177));
-        marksPosWall[2] = new Pose2d(10.4,-32.8,Math.toRadians(-150));
+        marksPosWall[0] = new Pose2d(11,-32,Math.toRadians(180));
+        marksPosWall[1] = new Pose2d(11,-32,Math.toRadians(170));
+        marksPosWall[2] = new Pose2d(10,-32,Math.toRadians(160));
         startPhase[0] = bot.drive.trajectorySequenceBuilder(new Pose2d(-0.2, 0, Math.toRadians(0)))
                 .addSpatialMarker(new Vector2d(0, 0), () -> {
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
@@ -76,7 +78,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
                 .build();
         spikeMarks[0] = bot.drive.trajectorySequenceBuilder(startPhase[0].end())
                 //spike mark 1
-                .addSpatialMarker(new Vector2d(23, -30), () -> {
+                .addSpatialMarker(new Vector2d(23, -30.5), () -> {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
                     sleep(300);
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
@@ -119,6 +121,19 @@ public class SpecimenAutoClawTest extends LinearOpMode {
 
         lastraj = spikeMarks[3];
 
+        park[0] = bot.drive.trajectorySequenceBuilder(spikeMarks[3].end())
+                .back(10)
+                .addDisplacementMarker(()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+                })
+                .build();
+        park[1] = bot.drive.trajectorySequenceBuilder(spikeMarks[3].end())
+
+                .setVelConstraint(new MecanumVelocityConstraint(25 , 9.65))
+                .setAccelConstraint(new ProfileAccelerationConstraint(6))
+                .forward(8)
+                .build();
+
         for (int i=0;i<=2;i++) {
             int finalI = i;
 
@@ -133,7 +148,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
                     )
                     .lineToLinearHeading(marksPosWall[i])
 
-                    .addTemporalMarker(0.4, 0.1, () -> {
+                    .addTemporalMarker(0.4, 0.2, () -> {
 
                         placeSpecimen(finalI);
                     })
@@ -218,16 +233,36 @@ public class SpecimenAutoClawTest extends LinearOpMode {
         }
         bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
 
-        for (int i=0;i<=2;i++) {
-            collectFromWall();
-            bot.drive.followTrajectorySequenceAsync(place[i]);
-            while ((bot.drive.isBusy() && !isStopRequested())) {
-                bot.drive.update();
-                telemetry.addData("er", bot.drive.getLastError());
-                bot.lifter.update();
-                telemetry.update();
-            }
+        bot.drive.followTrajectorySequenceAsync(park[0]);
+        while ((bot.drive.isBusy() && !isStopRequested())) {
+            bot.drive.update();
+            telemetry.addData("er", bot.drive.getLastError());
+            bot.lifter.update();
+            telemetry.update();
         }
+        sleep(3000);
+        bot.drive.followTrajectorySequence(park[1]);
+        while ((bot.drive.isBusy() && !isStopRequested())) {
+            bot.drive.update();
+            telemetry.addData("er", bot.drive.getLastError());
+            bot.lifter.update();
+            telemetry.update();
+        }
+        sleep(200);
+//
+//        for (int i=0;i<=2;i++) {
+//            collectFromWall();
+//            bot.drive.followTrajectorySequenceAsync(place[i]);
+//            while ((bot.drive.isBusy() && !isStopRequested())) {
+//                bot.drive.update();
+//                telemetry.addData("er", bot.drive.getLastError());
+//                bot.lifter.update();
+//                telemetry.update();
+//            }
+//        }
+
+
+
         telemetry.addLine("c'est fini");
         telemetry.addData("timp: ",getRuntime());
         telemetry.update();

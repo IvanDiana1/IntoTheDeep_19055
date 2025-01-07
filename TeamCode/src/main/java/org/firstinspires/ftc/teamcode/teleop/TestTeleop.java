@@ -70,6 +70,10 @@ public class TestTeleop extends LinearOpMode {
                 bot.claw.clawCatch();
             }
 
+            if(controller1.square.isPressed()){
+                bot.lifter.setTarget(Lifteer.LIFTER_STATES.SPECIMEN.val);
+            }
+
 
 
 
