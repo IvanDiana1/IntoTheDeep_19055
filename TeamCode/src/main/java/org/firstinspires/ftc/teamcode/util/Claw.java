@@ -23,7 +23,7 @@ public class Claw {
 
     }
     public enum HOLD_STATES{
-        HOLD(0.42),RELEASE(0.15) , HOLD_STRONGER(0.5);
+        HOLD(0.41),RELEASE(0.15) , HOLD_STRONGER(0.5);
         double val;
         HOLD_STATES(double val) {
             this.val = val;
@@ -37,7 +37,7 @@ public class Claw {
         }
     }
     public enum VERTICAL_STATES{
-      UP(1),DOWN(0.22),  LOWMID(0.26),  HIGHMID(75),   MIDDLE(0.65);
+      UP(1),DOWN(0.22),  LOWMID(0.3),  HIGHMID(75),   MIDDLE(0.65);
         double val;
         VERTICAL_STATES(double val) {
             this.val = val;
@@ -63,7 +63,7 @@ public class Claw {
     public void clawVRotate(){
         if (vState==VERTICAL_STATES.UP)
             vState = VERTICAL_STATES.DOWN;
-        else if (vState==VERTICAL_STATES.DOWN|| vState ==   VERTICAL_STATES.MIDDLE)
+        else if (vState==VERTICAL_STATES.DOWN|| vState ==   VERTICAL_STATES.MIDDLE || vState == VERTICAL_STATES.LOWMID)
             vState = VERTICAL_STATES.UP;
 
 

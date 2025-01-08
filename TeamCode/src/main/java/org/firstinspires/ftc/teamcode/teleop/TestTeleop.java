@@ -74,6 +74,14 @@ public class TestTeleop extends LinearOpMode {
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.SPECIMEN.val);
             }
 
+            if(controller1.dpadDown.isPressed()){
+                bot.lifter.setTarget(Lifteer.LIFTER_STATES.AGATATED.val);
+            }
+
+            if(controller1.circle.isPressed()){
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
+            }
+
 
 
 
@@ -212,6 +220,8 @@ public class TestTeleop extends LinearOpMode {
 
             if(controller2.dpadDown.isPressed()){
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+                sleep(400);
+                bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 isUp = false;
             }
 

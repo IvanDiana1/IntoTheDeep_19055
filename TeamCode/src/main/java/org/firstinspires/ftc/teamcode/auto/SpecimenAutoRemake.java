@@ -60,14 +60,14 @@ public class SpecimenAutoRemake extends LinearOpMode {
 
         spikeMarks[0] = bot.drive.trajectorySequenceBuilder(startPhase[0].end())
                 //collect sample from first spike mark
-                .addTemporalMarker(0.5,0,()->{
+                .addTemporalMarker(0.3,0,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
                 })
-                .addTemporalMarker(0.6,0,()->{
+                .addTemporalMarker(0.55,0.1,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
                 //raise sample from first spike mark
-                .addTemporalMarker(0.6,0.35,()->{
+                .addTemporalMarker(0.55,0.45,()->{
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                 })
@@ -77,7 +77,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
                 })
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(21.5, -40),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(22.5, -40),Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(16, -50, Math.toRadians(-180)),Math.toRadians(0))
                 .build();
 
@@ -94,7 +94,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(21.3, -50, Math.toRadians(0)),Math.toRadians(0),
+                .splineToLinearHeading(new Pose2d(21, -50, Math.toRadians(0)),Math.toRadians(0),
                         SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive3.getAccelerationConstraint(25))
 
@@ -128,17 +128,17 @@ public class SpecimenAutoRemake extends LinearOpMode {
                 })
 
                 //start lowering lifter
-                .addTemporalMarker(0.35,0,()->{
+                .addTemporalMarker(0.3,0,()->{
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
                 })
 
                 //collect last sample from spikemark
-                .addTemporalMarker(0.35,0.1,()->{
+                .addTemporalMarker(0.3,0.15,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
 
                 //raise last sample from spikemark
-                .addTemporalMarker(0.45,0.3,()->{
+                .addTemporalMarker(0.3,0.35,()->{
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                     bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
@@ -147,19 +147,17 @@ public class SpecimenAutoRemake extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(36, -46, Math.toRadians(-90)),Math.toRadians(0))
 
                 //leave sample in observation area
-                .addTemporalMarker(0.6,0.2,()->{
+                .addTemporalMarker(0.7,0.2,()->{
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                })
+                .addTemporalMarker(0.7,0.45,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
                 })
-                .addTemporalMarker(0.6,0.4,()->{
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
-                })
-                .addTemporalMarker(0.8,0,()->{
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                })
 
-                .splineToLinearHeading(new Pose2d(20.3, -35, Math.toRadians(-180)),Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(20.5, -30, Math.toRadians(-180)),Math.toRadians(0),
+                        SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive3.getAccelerationConstraint(20))
 
                 //collect specimen from wall
                 .addTemporalMarker(1,0,()->{
@@ -167,7 +165,9 @@ public class SpecimenAutoRemake extends LinearOpMode {
                 })
                 //velocity constraint to not bump the wall too hard
                 .setReversed(false)
-                .lineToConstantHeading(new Vector2d(13,-35))
+                .lineToConstantHeading(new Vector2d(13.3,-30),
+                        SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive3.getAccelerationConstraint(20))
 
                 .build();
 
@@ -178,102 +178,81 @@ public class SpecimenAutoRemake extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
                 })
                 //place first nonpreload specimen on fence
-                .addTemporalMarker(0.2,0.1,()->{
+                .addTemporalMarker(0.1,0,()->{
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
                 })
-                .addTemporalMarker(2,()->{
+                .addTemporalMarker(2.3,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                })
+                .addTemporalMarker(2.5,()->{
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.SPECIMEN.val);
                 })
-                .addTemporalMarker(2.8,()->{
+                .addTemporalMarker(3,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
                 })
+                .addTemporalMarker(3.6,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
+                })
+                .waitSeconds(0.2)
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(20,-4,Math.toRadians(0)))
-
-                //prepare for collecting second specimen from wall
-                .addTemporalMarker(0.9,0,()->{
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                })
-
-                .splineToLinearHeading(new Pose2d(20.5, -35, Math.toRadians(-210)),Math.toRadians(0),
+                .lineToLinearHeading(new Pose2d(18.5,-2,Math.toRadians(0)),
                         SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive3.getAccelerationConstraint(25))
+                        SampleMecanumDrive3.getAccelerationConstraint(20))
+                .waitSeconds(0.2)
+
+                .splineToLinearHeading(new Pose2d(5, -39.4, Math.toRadians(-90)),Math.toRadians(0),
+                        SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive3.getAccelerationConstraint(20))
 
                 //collect specimen from wall
+                .addTemporalMarker(0.9,0,()->{
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                })
                 .addTemporalMarker(1,0,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
-                //velocity constraint to not bump the wall too hard
-                .setReversed(false)
-                .lineToConstantHeading(new Vector2d(13,-35))
 
                 .build();
-
         place[1] = bot.drive.trajectorySequenceBuilder(place[0].end())
 
-                //place second nonpreload specimen on fence
+                //collect specimen from wall
                 .addTemporalMarker(0,0,()->{
-                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
                 })
-                .addTemporalMarker(0.2,0,()->{
+                //place first nonpreload specimen on fence
+                .addTemporalMarker(0.1,0,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
+                })
+                .addTemporalMarker(2.2,()->{
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                })
+                .addTemporalMarker(2.4,()->{
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.SPECIMEN.val);
                 })
-                .addTemporalMarker(0.2,0.1,()->{
+                .addTemporalMarker(3.1,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 })
-                .splineTo(new Vector2d(20,1),Math.toRadians(0))
-
-                //prepare for collecting third specimen from wall
-                .addTemporalMarker(0.7,0,()->{
-                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                .addTemporalMarker(3.5,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
                 })
-                .splineTo(new Vector2d(15,-35),Math.toRadians(-180))
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(22.8,-3,Math.toRadians(0)),Math.toRadians(0),
+                        SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive3.getAccelerationConstraint(20))
+                .waitSeconds(0.1)
 
+                .splineToLinearHeading(new Pose2d(0, -38.7, Math.toRadians(-100)),Math.toRadians(0),
+                        SampleMecanumDrive3.getVelocityConstraint(40,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive3.getAccelerationConstraint(20))
 
                 //collect specimen from wall
                 .addTemporalMarker(1,0,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
-                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 })
-                //velocity constraint to not bump the wall too hard
-                .setVelConstraint(new MecanumVelocityConstraint(25 , 9.65))
-                .setAccelConstraint(new ProfileAccelerationConstraint(15))
-                .lineToConstantHeading(new Vector2d(11,-35))
-                .build();
 
-        place[2] = bot.drive.trajectorySequenceBuilder(place[1].end())
-
-                //place third nonpreload specimen on fence
-                .addTemporalMarker(0,0,()->{
-                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                })
-                .addTemporalMarker(0.2,0,()->{
-                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.SPECIMEN.val);
-                })
-                .addTemporalMarker(0.2,0.1,()->{
-                    bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
-                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
-                })
-                .splineTo(new Vector2d(20,-3),Math.toRadians(0))
-
-                //park
-                .addTemporalMarker(0.7,0,()->{
-                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                })
-                .splineTo(new Vector2d(11,-35),Math.toRadians(-180))
                 .build();
 
     }
@@ -285,6 +264,8 @@ public class SpecimenAutoRemake extends LinearOpMode {
 
 
         buildTrajectories();
+        telemetry.addLine("que comience el espectaculo");
+        telemetry.update();
 
         waitForStart();
 
@@ -336,20 +317,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
             telemetry.update();
         }
 
-        sleep(5000);
-
         bot.drive.followTrajectorySequenceAsync(place[1]);
-
-        while ((bot.drive.isBusy() && !isStopRequested())) {
-            bot.drive.update();
-            telemetry.addData("er", bot.drive.getLastError());
-            bot.lifter.update();
-            telemetry.update();
-        }
-
-        sleep(5000);
-
-        bot.drive.followTrajectorySequenceAsync(place[2]);
 
         while ((bot.drive.isBusy() && !isStopRequested())) {
             bot.drive.update();
