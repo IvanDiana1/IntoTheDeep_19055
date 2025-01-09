@@ -86,14 +86,16 @@ public class Lifteer implements Updateable{
         rlifter.setPower(power);
         telemetryData();
 
-        if(Target == 0 && !isBusy() && Math.abs(currentPos)>5 && motors_resetable ) reset_motors();
+        if(Target == 0 && !isBusy() && Math.abs(currentPos)>5 && motors_resetable ){
+            autoPos = 0;
+            reset_motors();}
 
     }
 
 
     public void telemetryData(){
        telemetry.addData(" LIFTER Target: ",Target);
-        telemetry.addData("LIFTER POS: ",rlifter.getCurrentPosition());
+        telemetry.addData("LIFTER POS: ",currentPos);
        // telemetry.addData("pow", power);
         //   telemetry.addData("PID: ", current_pid.);
 
@@ -128,7 +130,7 @@ public class Lifteer implements Updateable{
     }
 
     public boolean isBusy(){
-       return (Math.abs(currentPos - Target) > 50);
+       return (Math.abs(currentPos - Target) > 40);
     }
     public void setAutoPos(int pos){
         autoPos = pos;

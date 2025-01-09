@@ -196,7 +196,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                 })
                 .waitSeconds(0.2)
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(18.5,-2,Math.toRadians(0)),
+                .lineToLinearHeading(new Pose2d(18.18,-1.5,Math.toRadians(0)),
                         SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive3.getAccelerationConstraint(20))
                 .waitSeconds(0.2)
@@ -239,7 +239,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
                 })
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(22.8,-3,Math.toRadians(0)),Math.toRadians(0),
+                .splineToLinearHeading(new Pose2d(23.2,-2.5,Math.toRadians(0)),Math.toRadians(0),
                         SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive3.getAccelerationConstraint(20))
                 .waitSeconds(0.1)

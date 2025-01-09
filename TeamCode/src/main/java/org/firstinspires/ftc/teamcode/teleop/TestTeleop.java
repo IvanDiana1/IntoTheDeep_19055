@@ -248,7 +248,6 @@ public class TestTeleop extends LinearOpMode {
             controller2.update();
 
         }
-     bot.lifter.setAutoPos(0);
 
 
 
