@@ -33,7 +33,7 @@ private void drop(){
     sleep(100);
     bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
     sleep(200);
-    bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
+    bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
     sleep(100);
     bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
 
@@ -102,11 +102,11 @@ public void buildTrajectories(){
 
     place[1] = bot.drive.trajectorySequenceBuilder(place[0].end())
             .setAccelConstraint(new ProfileAccelerationConstraint(7))
-            .splineToLinearHeading(new Pose2d(19,43.5,Math.toRadians(3)),Math.toRadians(0))
+            .splineToLinearHeading(new Pose2d(20,43.5,Math.toRadians(0)),Math.toRadians(0))
             .build();
 
     place[2] = bot.drive.trajectorySequenceBuilder(place[1].end())
-            .lineToLinearHeading(new Pose2d(14 , 35, Math.toRadians(-210)))
+            .lineToLinearHeading(new Pose2d(14 , 35, Math.toRadians(-220)))
             .build();
 
     place[3] = bot.drive.trajectorySequenceBuilder(place[2].end())
@@ -115,21 +115,21 @@ public void buildTrajectories(){
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
                 bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULAR);
             })
-            .addTemporalMarker(0.2,0.3,()->{
+            .addTemporalMarker(0.3,0.2,()->{
                 bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
             })
 
             //start lowering lifter
-            .addTemporalMarker(0.3,0,()->{
+            .addTemporalMarker(0.4,0,()->{
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
             })
 
             //collect last sample from spikemark
-            .addTemporalMarker(0.3,0.3,()->{
+            .addTemporalMarker(0.4,0.2,()->{
                 bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
             })
 
-            .addTemporalMarker(0.3,0.45,()->{
+            .addTemporalMarker(0.4,0.45,()->{
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
             })
 
@@ -139,7 +139,7 @@ public void buildTrajectories(){
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
             })
             .setReversed(true)
-            .splineToLinearHeading(new Pose2d(34.5, 39.7, Math.toRadians(90)),Math.toRadians(0),
+            .splineToLinearHeading(new Pose2d(34.6, 39.3, Math.toRadians(90)),Math.toRadians(0),
                     SampleMecanumDrive3.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                     SampleMecanumDrive3.getAccelerationConstraint(10))
 
@@ -154,7 +154,7 @@ public void buildTrajectories(){
                 bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
             })
-            .splineToLinearHeading(new Pose2d(11.5, 35, Math.toRadians(-210)),Math.toRadians(0),
+            .splineToLinearHeading(new Pose2d(11.5, 35, Math.toRadians(-225)),Math.toRadians(0),
                     SampleMecanumDrive3.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                     SampleMecanumDrive3.getAccelerationConstraint(10))
             .waitSeconds(0.4)
@@ -165,9 +165,9 @@ public void buildTrajectories(){
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val-20);
             } )
             .setReversed(true)
-            .splineToLinearHeading(new Pose2d(50,18,Math.toRadians(-90)),Math.toRadians(200),
+            .splineToLinearHeading(new Pose2d(50,14.5,Math.toRadians(-90)),Math.toRadians(200),
                     SampleMecanumDrive3.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
-                    SampleMecanumDrive3.getAccelerationConstraint(10))
+                    SampleMecanumDrive3.getAccelerationConstraint(15))
             .build();
 
 }
@@ -262,7 +262,7 @@ public void buildTrajectories(){
         });
         uniqueThread.start();
 
-        sleep(45);
+        sleep(55);
 
         uniqueThread.interrupt();
         bot.lifter.float_motors();

@@ -77,7 +77,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
                 })
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(22.5, -40),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(21, -40),Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(16, -50, Math.toRadians(-180)),Math.toRadians(0))
                 .build();
 
@@ -94,7 +94,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(21, -50, Math.toRadians(0)),Math.toRadians(0),
+                .splineToLinearHeading(new Pose2d(20, -50, Math.toRadians(0)),Math.toRadians(0),
                         SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive3.getAccelerationConstraint(25))
 
@@ -144,7 +144,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                 })
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(36, -46, Math.toRadians(-90)),Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(35, -46, Math.toRadians(-90)),Math.toRadians(0))
 
                 //leave sample in observation area
                 .addTemporalMarker(0.7,0.2,()->{
@@ -165,7 +165,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                 })
                 //velocity constraint to not bump the wall too hard
                 .setReversed(false)
-                .lineToConstantHeading(new Vector2d(13.3,-30),
+                .lineToConstantHeading(new Vector2d(15,-30),
                         SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive3.getAccelerationConstraint(20))
 
@@ -201,17 +201,17 @@ public class SpecimenAutoRemake extends LinearOpMode {
                         SampleMecanumDrive3.getAccelerationConstraint(20))
                 .waitSeconds(0.2)
 
-                .splineToLinearHeading(new Pose2d(5, -39.4, Math.toRadians(-90)),Math.toRadians(0),
-                        SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive3.getAccelerationConstraint(20))
-
-                //collect specimen from wall
-                .addTemporalMarker(0.9,0,()->{
-                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-                })
-                .addTemporalMarker(1,0,()->{
-                    bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
-                })
+//                .splineToLinearHeading(new Pose2d(5, -39.4, Math.toRadians(-90)),Math.toRadians(0),
+//                        SampleMecanumDrive3.getVelocityConstraint(45,DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
+//                        SampleMecanumDrive3.getAccelerationConstraint(20))
+//
+//                //collect specimen from wall
+//                .addTemporalMarker(0.9,0,()->{
+//                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+//                })
+//                .addTemporalMarker(1,0,()->{
+//                    bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
+//                })
 
                 .build();
         place[1] = bot.drive.trajectorySequenceBuilder(place[0].end())
@@ -317,14 +317,14 @@ public class SpecimenAutoRemake extends LinearOpMode {
             telemetry.update();
         }
 
-        bot.drive.followTrajectorySequenceAsync(place[1]);
-
-        while ((bot.drive.isBusy() && !isStopRequested())) {
-            bot.drive.update();
-            telemetry.addData("er", bot.drive.getLastError());
-            bot.lifter.update();
-            telemetry.update();
-        }
+//        bot.drive.followTrajectorySequenceAsync(place[1]);
+//
+//        while ((bot.drive.isBusy() && !isStopRequested())) {
+//            bot.drive.update();0
+//            telemetry.addData("er", bot.drive.getLastError());
+//            bot.lifter.update();
+//            telemetry.update();
+//        }
 
         telemetry.addLine("c'est fini");
         telemetry.addData("timp: ",getRuntime());

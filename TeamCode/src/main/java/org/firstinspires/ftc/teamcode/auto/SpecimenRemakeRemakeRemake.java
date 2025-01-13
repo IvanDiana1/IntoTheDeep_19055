@@ -3,9 +3,6 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.Linkage;
 import org.firstinspires.ftc.teamcode.util.Robot;
 
 @Autonomous
-public class SpecimenAutoClawTest extends LinearOpMode {
+public class SpecimenRemakeRemakeRemake extends LinearOpMode {
     Robot bot = new Robot();
     private TrajectorySequence lastraj;
     private static final double dist_between_specimens = 2;
@@ -26,32 +23,10 @@ public class SpecimenAutoClawTest extends LinearOpMode {
 
     public void collectFromWall(){
         bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
-        sleep(400);
+        sleep(300);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
         sleep(300);
         bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
-    }
-    public void placeSpecimen(int casee){
-
-        bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-        sleep(360);
-        if (casee<2)
-            bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
-        else
-            bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
-
-
-        bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-        if(casee<2){
-            sleep(80);
-            bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-            bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-            bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
-        }
-        else if(casee==3){
-            sleep(80);
-            bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
-        }
     }
 
     public void buildTrajectories(double voltage) {
@@ -68,53 +43,72 @@ public class SpecimenAutoClawTest extends LinearOpMode {
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
                 })
                 .addTemporalMarker(2400, () -> {
-                    placeSpecimen(3);
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
+
+                    //placeSpecimen(3);
                 })
-                .forward(16)
+                .addTemporalMarker(2750,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+                    bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
+
+                })
+                .addTemporalMarker(2830,()->{
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+                })
+                .splineToConstantHeading(new Vector2d(16,1),Math.toRadians(0))
                 .build();
         spikeMarks[0] = bot.drive.trajectorySequenceBuilder(startPhase[0].end())
                 //spike mark 1
-                .addSpatialMarker(new Vector2d(23, -30.5), () -> {
+                .addTemporalMarker(0,0.1,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                    sleep(250);
+                })
+                .addTemporalMarker(0,0.350,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
-                    sleep(200);
+                })
+                .addTemporalMarker(0,0.550,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+
                 })
                 .lineToLinearHeading(new Pose2d(23, -31, Math.toRadians(-30)))
-                .lineToLinearHeading(new Pose2d(19, -41, Math.toRadians(-155)))
+                .splineToLinearHeading(new Pose2d(19, -41, Math.toRadians(-120)),Math.toRadians(0))
                 .build();
         spikeMarks[1] = bot.drive.trajectorySequenceBuilder(spikeMarks[0].end())
                 //leave spike mark 1 + spike mark 2
-                .addSpatialMarker(new Vector2d(24.13, -41.9), () -> {
-                    sleep(10);
+                .addTemporalMarker(20,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                    sleep(300);
+                })
+                .addTemporalMarker(320,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
-                    sleep(50);
+                })
+                .addTemporalMarker(370,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-                    sleep(150);
+                })
+                .addTemporalMarker(520,()->{
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
                 })
+
                 .lineToLinearHeading(new Pose2d(24, -42.15, Math.toRadians(-20)))
-                .lineToLinearHeading(new Pose2d(19.6, -48, Math.toRadians(-155)))
+                .splineToLinearHeading(new Pose2d(19.6, -48, Math.toRadians(-120)),Math.toRadians(0))
                 .build();
         spikeMarks[2] = bot.drive.trajectorySequenceBuilder(spikeMarks[1].end())
 
-                .lineToLinearHeading(new Pose2d(25.23, -52, Math.toRadians(-25)))
+                .lineToLinearHeading(new Pose2d(35, -46, Math.toRadians(-90)))
 
                 .build();
 
         spikeMarks[3] = bot.drive.trajectorySequenceBuilder(spikeMarks[2].end())
                 .addTemporalMarker(600, () -> {
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
-                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
-                    sleep(50);
+                            bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                            bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
+                        })
+                .addTemporalMarker(650,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-                    sleep(150);
+                })
+                .addTemporalMarker(800,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                 })
-                .lineToLinearHeading(new Pose2d(14, -31.5, Math.toRadians(-172)))
+
+                .splineToLinearHeading(new Pose2d(14, -31.5, Math.toRadians(-178)),Math.toRadians(20))
                 .build();
 
         lastraj = spikeMarks[3];
@@ -137,16 +131,23 @@ public class SpecimenAutoClawTest extends LinearOpMode {
                     .addTemporalMarker(2.5,()->{
                         bot.lifter.setTarget(Lifteer.LIFTER_STATES.SPECIMEN.val);
                     })
+                    .addTemporalMarker(2.9,()->{
+                        bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
+                    })
                     .addTemporalMarker(3.2,()->{
                         bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
                     })
                     .addTemporalMarker(3.3,()->{
+
                         bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                     })
-                    .lineToLinearHeading(marksPosFence[i])
-                    .waitSeconds(0.5)
-
                     .lineToLinearHeading(marksPosWall[i])
+                    .waitSeconds(0.1)
+
+                    .setReversed(true)
+                    .splineToLinearHeading(marksPosFence[i],Math.toRadians(50))
+                    .waitSeconds(0.1)
+
                     .build();
             lastraj = place[i];
         }
@@ -203,7 +204,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
 //      sleep(500);
         bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
         bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
-        sleep(400);
+        sleep(300);
         bot.drive.followTrajectorySequenceAsync(spikeMarks[2]);
 
         while ((bot.drive.isBusy() && !isStopRequested())) {

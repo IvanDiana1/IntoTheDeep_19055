@@ -43,7 +43,6 @@ public class TestTeleop extends LinearOpMode {
         bot.Init(hardwareMap,telemetry);
         bot.lifter.setTarget(Lifteer.autoPos);
         waitForStart();
-        bot.claw.clawCatch();
         bot.lifter.reset_motors();
 //        bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
 
@@ -164,7 +163,6 @@ public class TestTeleop extends LinearOpMode {
                             if (Thread.currentThread().isInterrupted()) {
                                 return;
                             }
-                            bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
 
                         } else {
                             bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
@@ -174,7 +172,6 @@ public class TestTeleop extends LinearOpMode {
                             }
                             bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
                             isExtended = true;
-                            bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
 
                         }
                     }
@@ -249,8 +246,7 @@ public class TestTeleop extends LinearOpMode {
 
         }
 
-
-
+     bot.lifter.setAutoPos(0);
 
 
     }

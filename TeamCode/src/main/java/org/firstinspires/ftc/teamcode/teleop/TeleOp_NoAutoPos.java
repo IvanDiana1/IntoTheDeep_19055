@@ -23,6 +23,7 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
 
 
 
+
     public Robot bot = new Robot();
     public Controller controller1, controller2;
     public double weight = 0.4;
