@@ -22,7 +22,7 @@ public class SpecimenAutoClaw extends LinearOpMode {
         startPhase[0] = bot.drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .addSpatialMarker(new Vector2d(0, 0), () -> {
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                 })
                 .addTemporalMarker(2400, () -> {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
@@ -69,7 +69,7 @@ public class SpecimenAutoClaw extends LinearOpMode {
 
         spikeMarks[3] = bot.drive.trajectorySequenceBuilder(spikeMarks[2].end())
                 .addTemporalMarker(600, ()->{
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                     bot.lifter.setTarget(400);
                     sleep(150);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
@@ -81,7 +81,7 @@ public class SpecimenAutoClaw extends LinearOpMode {
                 .lineToLinearHeading( new Pose2d( 17.4 , -3 , Math.toRadians(5)))
                 .addSpatialMarker(new Vector2d( 16, -18), () ->
                         {   bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                            bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                            bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                         })
 
                 .addTemporalMarker(2400, () -> {
@@ -145,7 +145,7 @@ public class SpecimenAutoClaw extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
         sleep(400);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);

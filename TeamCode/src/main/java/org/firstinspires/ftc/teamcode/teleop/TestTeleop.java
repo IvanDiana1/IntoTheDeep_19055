@@ -6,7 +6,6 @@ import static java.lang.Math.min;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -101,7 +100,7 @@ public class TestTeleop extends LinearOpMode {
 //                        if (Thread.currentThread().isInterrupted()) {
 //                            return;
 //                        }}
-//                        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+//                        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
 //                        isExtended = true;
 //                        bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
 //                        sleep(400);
@@ -120,6 +119,7 @@ public class TestTeleop extends LinearOpMode {
                 uniqueThread.interrupt();
                 if (bot.lifter.Target == Lifteer.LIFTER_STATES.UP.val || bot.lifter.Target == Lifteer.LIFTER_STATES.MIDDLE.val ) {
                     bot.linkage.linkageMove();
+                    isExtended = !isExtended;
                 } else
                 if( bot.lifter.Target == Lifteer.LIFTER_STATES.LOWMID.val){
                       if(isExtended) {
@@ -219,6 +219,7 @@ public class TestTeleop extends LinearOpMode {
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
                 sleep(400);
                 bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
+                isExtended = false;
                 isUp = false;
             }
 

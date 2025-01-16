@@ -124,7 +124,7 @@ public class SampleAutoSample extends LinearOpMode {
             telemetry.update();
         }
 
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         sleep(400);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.HIGHMID);
         sleep(100);
@@ -149,7 +149,7 @@ public class SampleAutoSample extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         sleep(300);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
         sleep(100);
@@ -167,7 +167,7 @@ public class SampleAutoSample extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         sleep(100);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.HIGHMID);
         sleep(300);
@@ -190,7 +190,7 @@ public class SampleAutoSample extends LinearOpMode {
         uniqueThread.interrupt();
         sleep(300);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.TILTED);
         sleep(300);
         bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
@@ -209,7 +209,7 @@ public class SampleAutoSample extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.HIGHMID);
         sleep(400);
         bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
@@ -233,7 +233,7 @@ public class SampleAutoSample extends LinearOpMode {
 
 
 
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         sleep(400);
         bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
         sleep(50);

@@ -4,8 +4,6 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -65,7 +63,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
         startPhase[0] = bot.drive.trajectorySequenceBuilder(new Pose2d(-0.2, 0, Math.toRadians(0)))
                 .addSpatialMarker(new Vector2d(0, 0), () -> {
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                 })
                 .addTemporalMarker(2400, () -> {
                     placeSpecimen(3);
@@ -107,7 +105,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
 
         spikeMarks[3] = bot.drive.trajectorySequenceBuilder(spikeMarks[2].end())
                 .addTemporalMarker(600, () -> {
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                     sleep(50);
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
@@ -128,7 +126,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
                     .addTemporalMarker(0, 0, () ->
                             {
                                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                                bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                                bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                             }
                     )
                     .addTemporalMarker(2,()->{
@@ -213,7 +211,7 @@ public class SpecimenAutoClawTest extends LinearOpMode {
             telemetry.update();
         }
 
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
         sleep(400);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);

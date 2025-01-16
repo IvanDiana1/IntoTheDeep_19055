@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -26,7 +21,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
     public static TrajectorySequence startPhase[] = new TrajectorySequence[1], spikeMarks[] = new TrajectorySequence[3] , place[] = new TrajectorySequence[3];
 
     public void collectFromWall(){
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         sleep(100);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
         sleep(400);
@@ -43,7 +38,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                 .addSpatialMarker(new Vector2d(0, 0), () -> {
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                 })
                 .addTemporalMarker(1.3,()->{
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.SPECIMEN.val);
@@ -87,7 +82,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 })
                 .addTemporalMarker(0.35,0.1,()->{
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
                 })
                 .addTemporalMarker(0.35,0.3,()->{
@@ -149,7 +144,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                 //leave sample in observation area
                 .addTemporalMarker(0.7,0.2,()->{
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                 })
                 .addTemporalMarker(0.7,0.45,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);

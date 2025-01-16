@@ -37,7 +37,7 @@ public class Claw {
         }
     }
     public enum VERTICAL_STATES{
-      UP(1),DOWN(0.22),  LOWMID(0.3),  HIGHMID(75),   MIDDLE(0.65);
+      UP(1),DOWN(0.22),  LOWMID(0.3),  HIGHMID(0.75),   MIDDLE(0.65);
         double val;
         VERTICAL_STATES(double val) {
             this.val = val;

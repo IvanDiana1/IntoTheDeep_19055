@@ -16,7 +16,7 @@ public class Linkage {
     }
 
     public enum EXTEND_STATES{
-       CLOSE(0.49), EXTEND(0.05), MIDDLE(0.2) , HIGHMID(0.1);
+       CLOSE(0.49), PARTIAL_EXTEND(0.22), EXTEND(0), MIDDLE(0.32) , HIGHMID(0.27);
 
        double val;
        EXTEND_STATES(double val){
@@ -27,7 +27,7 @@ public class Linkage {
 
     public void linkageMove() {
         if(extendState==EXTEND_STATES.CLOSE){
-            extendState=EXTEND_STATES.EXTEND;
+            extendState=EXTEND_STATES.PARTIAL_EXTEND;
         }
         else {
             extendState=EXTEND_STATES.CLOSE;

@@ -6,7 +6,6 @@ import static java.lang.Math.min;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -87,7 +86,7 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
 //                        if (Thread.currentThread().isInterrupted()) {
 //                            return;
 //                        }}
-//                        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+//                        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
 //                        isExtended = true;
 //                        bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
 //                        sleep(400);
@@ -132,7 +131,7 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
                             if (Thread.currentThread().isInterrupted()) {
                                 return;
                             }
-                            bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                            bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                             isExtended = true;
                             bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
                             sleep(400);

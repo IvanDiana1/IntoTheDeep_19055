@@ -25,7 +25,7 @@ public class SampleAutoSampleRemake extends LinearOpMode {
 
 
 private void drop(){
-    bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
     sleep(200);
     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
     sleep(150);
@@ -63,7 +63,7 @@ public void buildTrajectories(){
             })
             .addTemporalMarker(0.48 ,0,  () ->
             {
-                bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
 
             })
             .addTemporalMarker(0.5,0.1,()->{
@@ -102,11 +102,11 @@ public void buildTrajectories(){
 
     place[1] = bot.drive.trajectorySequenceBuilder(place[0].end())
             .setAccelConstraint(new ProfileAccelerationConstraint(7))
-            .splineToLinearHeading(new Pose2d(20,43.5,Math.toRadians(0)),Math.toRadians(0))
+            .splineToLinearHeading(new Pose2d(19.8,43.5,Math.toRadians(0)),Math.toRadians(0))
             .build();
 
     place[2] = bot.drive.trajectorySequenceBuilder(place[1].end())
-            .lineToLinearHeading(new Pose2d(14 , 35, Math.toRadians(-220)))
+            .lineToLinearHeading(new Pose2d(13.5 , 34.5, Math.toRadians(-215)))
             .build();
 
     place[3] = bot.drive.trajectorySequenceBuilder(place[2].end())
@@ -139,7 +139,7 @@ public void buildTrajectories(){
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
             })
             .setReversed(true)
-            .splineToLinearHeading(new Pose2d(34.6, 39.3, Math.toRadians(90)),Math.toRadians(0),
+            .splineToLinearHeading(new Pose2d(34.3, 39.5, Math.toRadians(93)),Math.toRadians(0),
                     SampleMecanumDrive3.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                     SampleMecanumDrive3.getAccelerationConstraint(10))
 
@@ -147,16 +147,19 @@ public void buildTrajectories(){
             .addTemporalMarker(0.6,0.1,()->{
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.UP.val);
             })
-            .addTemporalMarker(0.92,0,()->{
+            .addTemporalMarker(0.92,0.2,()->{
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
             })
-            .addTemporalMarker(0.92,0.2,()->{
+            .addTemporalMarker(0.92,0.3,()->{
                 bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-                bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
             })
-            .splineToLinearHeading(new Pose2d(11.5, 35, Math.toRadians(-225)),Math.toRadians(0),
+            .addTemporalMarker(0.92,0.6,()->{
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+
+            })
+            .splineToLinearHeading(new Pose2d(11, 34.7, Math.toRadians(-210)),Math.toRadians(0),
                     SampleMecanumDrive3.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
-                    SampleMecanumDrive3.getAccelerationConstraint(10))
+                    SampleMecanumDrive3.getAccelerationConstraint(15))
             .waitSeconds(0.4)
             .build();
 

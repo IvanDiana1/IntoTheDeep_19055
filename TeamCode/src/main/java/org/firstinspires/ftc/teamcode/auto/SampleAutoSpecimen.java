@@ -43,7 +43,7 @@ public class SampleAutoSpecimen extends LinearOpMode {
      startPhase[0] = bot.drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
              .addSpatialMarker(new Vector2d(0, 0), () -> {
                  bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
-                 bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                 bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
              })
              .addTemporalMarker(2400, () -> {
                  placeSpecimen(3);
@@ -159,7 +159,7 @@ public class SampleAutoSpecimen extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         sleep(300);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
         sleep(100);
@@ -177,7 +177,7 @@ public class SampleAutoSpecimen extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         sleep(100);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.HIGHMID);
         sleep(300);
@@ -202,7 +202,7 @@ public class SampleAutoSpecimen extends LinearOpMode {
         uniqueThread.interrupt();
         sleep(300);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.TILTED);
         sleep(300);
         bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
@@ -221,7 +221,7 @@ public class SampleAutoSpecimen extends LinearOpMode {
             bot.lifter.update();
             telemetry.update();
         }
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.HIGHMID);
         sleep(400);
         bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
@@ -245,7 +245,7 @@ public class SampleAutoSpecimen extends LinearOpMode {
 
 
 
-        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+        bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
         sleep(400);
         bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
         sleep(50);
