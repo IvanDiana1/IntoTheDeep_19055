@@ -27,7 +27,7 @@ public class Linkage {
 
     public void linkageMove() {
         if(extendState==EXTEND_STATES.CLOSE){
-            extendState=EXTEND_STATES.PARTIAL_EXTEND;
+            extendState=EXTEND_STATES.EXTEND;
         }
         else {
             extendState=EXTEND_STATES.CLOSE;

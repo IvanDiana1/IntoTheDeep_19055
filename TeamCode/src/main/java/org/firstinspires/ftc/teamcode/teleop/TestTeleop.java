@@ -123,7 +123,7 @@ public class TestTeleop extends LinearOpMode {
                 } else
                 if( bot.lifter.Target == Lifteer.LIFTER_STATES.LOWMID.val){
                       if(isExtended) {
-                          bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+                          bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
 
                           sleep(300);
                           if (Thread.currentThread().isInterrupted()) {
@@ -138,7 +138,7 @@ public class TestTeleop extends LinearOpMode {
                           if (Thread.currentThread().isInterrupted()) {
                               return;
                           }
-                          bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                          bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                           isExtended = true;
                       }
 
@@ -149,7 +149,7 @@ public class TestTeleop extends LinearOpMode {
                 else {
                     uniqueThread = new Thread(() -> {
                         if (isExtended) {
-                            bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+                            bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                             bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                             bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
                             sleep(300);
@@ -165,7 +165,7 @@ public class TestTeleop extends LinearOpMode {
                             }
 
                         } else {
-                            bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+                            bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                             sleep(300);
                             if (Thread.currentThread().isInterrupted()) {
                                 return;

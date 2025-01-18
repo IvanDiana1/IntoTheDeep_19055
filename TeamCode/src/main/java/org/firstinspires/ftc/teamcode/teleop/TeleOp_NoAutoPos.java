@@ -22,11 +22,14 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
 
 
 
-
     public Robot bot = new Robot();
     public Controller controller1, controller2;
     public double weight = 0.4;
     public Thread uniqueThread = new Thread();
+
+
+    int lifterInitial = 0;
+    int dtlifter=0;
 
     public boolean isExtended = false;
     public boolean isUp = false;
@@ -38,9 +41,10 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
         controller2 = new Controller(gamepad2);
         bot.Init(hardwareMap,telemetry);
         bot.lifter.setAutoPos(0);
-
+        bot.lifter.setTarget(Lifteer.autoPos);
         waitForStart();
-        bot.claw.clawCatch();
+        bot.lifter.reset_motors();
+        bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
 //        bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
 
         while(opModeIsActive() && !isStopRequested()){
@@ -64,6 +68,18 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
 
             if(controller1.bumperLeft.isPressed()){
                 bot.claw.clawCatch();
+            }
+
+            if(controller1.square.isPressed()){
+                bot.lifter.setTarget(Lifteer.LIFTER_STATES.SPECIMEN.val);
+            }
+
+            if(controller1.dpadDown.isPressed()){
+                bot.lifter.setTarget(Lifteer.LIFTER_STATES.AGATATED.val);
+            }
+
+            if(controller1.circle.isPressed()){
+                bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
             }
 
 
@@ -101,12 +117,38 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
 
 
             //close linkage
-            if(controller2.circle.isPressed()) {
+            if(controller2.triangle.isPressed()) {
                 uniqueThread.interrupt();
-                if (isUp) {
+                if (bot.lifter.Target == Lifteer.LIFTER_STATES.UP.val || bot.lifter.Target == Lifteer.LIFTER_STATES.MIDDLE.val ) {
                     bot.linkage.linkageMove();
+                    isExtended = !isExtended;
+                } else
+                if( bot.lifter.Target == Lifteer.LIFTER_STATES.LOWMID.val){
+                    if(isExtended) {
+                        bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
 
-                } else {
+                        sleep(300);
+                        if (Thread.currentThread().isInterrupted()) {
+                            return;
+                        }
+                        bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
+                        isExtended = false;
+                    }
+                    else
+                    {
+                        bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                        if (Thread.currentThread().isInterrupted()) {
+                            return;
+                        }
+                        bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
+                        isExtended = true;
+                    }
+
+
+                }
+
+
+                else {
                     uniqueThread = new Thread(() -> {
                         if (isExtended) {
                             bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
@@ -123,7 +165,6 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
                             if (Thread.currentThread().isInterrupted()) {
                                 return;
                             }
-                            bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
 
                         } else {
                             bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
@@ -131,14 +172,9 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
                             if (Thread.currentThread().isInterrupted()) {
                                 return;
                             }
-                            bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
+                            bot.linkage.linkageMove(Linkage.EXTEND_STATES.EXTEND);
                             isExtended = true;
-                            bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
-                            sleep(400);
-                            if (Thread.currentThread().isInterrupted()) {
-                                return;
-                            }
-                            bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
+
                         }
                     }
                     );
@@ -156,8 +192,23 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
 
 
             }
-            if(controller2.square.isPressed()){
+
+            if(controller2.circle.isPressed()){
                 bot.claw.clawVRotate();
+            }
+
+            if (Math.abs(controller2.leftStickY)>0.2){
+                if (controller2.leftStickY<0)
+                    dtlifter+=4;
+                else
+                    dtlifter-=4;
+                if (Math.abs(dtlifter)==4)
+                    lifterInitial = bot.lifter.currentPos;
+                bot.lifter.setTarget(lifterInitial+dtlifter);
+            }
+            else {
+                lifterInitial = 0;
+                dtlifter=0;
             }
 
             if(controller2.dpadUp.isPressed()){
@@ -168,6 +219,9 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
 
             if(controller2.dpadDown.isPressed()){
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+                sleep(400);
+                bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
+                isExtended = false;
                 isUp = false;
             }
 
@@ -175,25 +229,17 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
                 isUp = true;
             }
+            if (controller2.dpadLeft.isPressed()){
+                bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
+                isUp = true;
+            }
             if(controller2.bumperRight.isPressed() ){
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
             }
 
-//            if(controller1. bumperRight.isPressed()){
-//                bot.drive.setPoseEstimate(new Pose2d(0,0,Math.toRadians(0)));
-//
-//
-//
-//                bot.drive.followTrajectorySequence(
-//                        bot.drive.trajectorySequenceBuilder(new Pose2d(0,0,Math.toRadians(0)))
-//
-//                                .splineToLinearHeading(new Pose2d(0 , 1 , Math.toRadians(180)), Math.toRadians(180))
-//                                .build()
-//                );
-//            }
-
-
-
+            if(controller2.bumperLeft.isPressed()){
+                bot.lifter.setTarget(Lifteer.LIFTER_STATES.AGATATED.val);
+            }
 
             bot.lifter.telemetryData();
             bot.lifter.update();
@@ -203,8 +249,7 @@ public class TeleOp_NoAutoPos extends LinearOpMode {
 
         }
 
-
-
+        bot.lifter.setAutoPos(0);
 
 
     }
