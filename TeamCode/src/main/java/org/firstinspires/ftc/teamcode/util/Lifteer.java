@@ -130,7 +130,7 @@ public class Lifteer implements Updateable{
     }
 
     public boolean isBusy(){
-       return (Math.abs(currentPos - Target) > 40);
+       return (Math.abs(currentPos - Target) > 45);
     }
     public void setAutoPos(int pos){
         autoPos = pos;

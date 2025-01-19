@@ -157,7 +157,7 @@ public void buildTrajectories(){
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
 
             })
-            .splineToLinearHeading(new Pose2d(11, 34.7, Math.toRadians(-210)),Math.toRadians(0),
+            .splineToLinearHeading(new Pose2d(11.55, 35.4, Math.toRadians(-215)),Math.toRadians(0),
                     SampleMecanumDrive3.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                     SampleMecanumDrive3.getAccelerationConstraint(15))
             .waitSeconds(0.4)
@@ -168,7 +168,7 @@ public void buildTrajectories(){
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val-20);
             } )
             .setReversed(true)
-            .splineToLinearHeading(new Pose2d(50,14.5,Math.toRadians(-90)),Math.toRadians(200),
+            .splineToLinearHeading(new Pose2d(50,13.5,Math.toRadians(-90)),Math.toRadians(200),
                     SampleMecanumDrive3.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL,DriveConstants.TRACK_WIDTH),
                     SampleMecanumDrive3.getAccelerationConstraint(15))
             .build();

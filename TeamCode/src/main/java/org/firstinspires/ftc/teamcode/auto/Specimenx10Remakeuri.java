@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.Linkage;
 import org.firstinspires.ftc.teamcode.util.Robot;
 
 @Autonomous
-public class SpecimenRemakeRemakeRemake extends LinearOpMode {
+public class Specimenx10Remakeuri extends LinearOpMode {
     Robot bot = new Robot();
     public static TrajectorySequence park[] = new TrajectorySequence[2] ,startPhase[] = new TrajectorySequence[1], spikeMarks[] = new TrajectorySequence[4] , place[] = new TrajectorySequence[3] , collect[] = new TrajectorySequence[1];
     public static Pose2d marksPosFence[] = new  Pose2d[3] ;
@@ -50,10 +50,10 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                 .addTemporalMarker(0.4,0.05,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
                 })
-                .addTemporalMarker(0.4,0.43,()->{
+                .addTemporalMarker(0.4,0.5,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
-                .addTemporalMarker(0.52,0.45,()->{
+                .addTemporalMarker(0.52,0.52,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.MIDDLE);
 
@@ -61,7 +61,7 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                 .addTemporalMarker(0.89,0.1,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
                 })
-                .lineToLinearHeading(new Pose2d(21.8, -30.5, Math.toRadians(-25)))
+                .lineToLinearHeading(new Pose2d(21.75, -32.8, Math.toRadians(-20)))
                 .splineToLinearHeading(new Pose2d(19, -41, Math.toRadians(-150)),Math.toRadians(0))
                 .build();
         spikeMarks[1] = bot.drive.trajectorySequenceBuilder(new Pose2d(19, -41, Math.toRadians(-150)))
@@ -98,25 +98,44 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 })
 
-                .lineToLinearHeading(new Pose2d(26, -43.7, Math.toRadians(-10)))
+                .lineToLinearHeading(new Pose2d(26.1, -43.7, Math.toRadians(-10)))
                 .splineToLinearHeading(new Pose2d(19.6, -45, Math.toRadians(-150)),Math.toRadians(0))
                 .build();
         spikeMarks[2] = bot.drive.trajectorySequenceBuilder(new Pose2d(19.6, -45, Math.toRadians(-150)))
-                .addTemporalMarker(0.6,0.2,()->{
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
-                })
-                .addTemporalMarker(0.75,0.2,()->{
+                .addTemporalMarker(0.4,0,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                })
-                .addTemporalMarker(0.75,0.8,()->{
                     bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULAR);
                 })
+                .addTemporalMarker(0.45,0.2,()->{
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
+                })
 
-                .lineToLinearHeading(new Pose2d(38.9, -40.78, Math.toRadians(-90)))
+                //start lowering lifter
+                .addTemporalMarker(0.6,0.45,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+                })
+
+                //collect last sample from spikemark
+                .addTemporalMarker(0.7,0.53,()->{
+                    bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
+                })
+
+                .addTemporalMarker(0.7,0.7,()->{
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
+                })
+
+                //raise last sample from spikemark
+                .addTemporalMarker(0.85,0.65,()->{
+                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                })
+
+                .lineToLinearHeading(new Pose2d(38.9, -43.65, Math.toRadians(-90)))
 
                 .build();
 
-        spikeMarks[3] = bot.drive.trajectorySequenceBuilder(new Pose2d(40, -40.3, Math.toRadians(-90)))
+        spikeMarks[3] = bot.drive.trajectorySequenceBuilder(new Pose2d(40, -40.65, Math.toRadians(-90)))
                 .addTemporalMarker(0,0.1,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
@@ -144,11 +163,11 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                 })
 
-                .splineToLinearHeading(new Pose2d(14.4, -31.5, Math.toRadians(-178)),Math.toRadians(20))
+                .splineToLinearHeading(new Pose2d(14.4, -31.8, Math.toRadians(-178)),Math.toRadians(20))
                 .build();
 
 
-        place[0] = bot.drive.trajectorySequenceBuilder(new Pose2d( 14.4  , -31.5, Math.toRadians(-178)))
+        place[0] = bot.drive.trajectorySequenceBuilder(spikeMarks[3].end())
                 //place first nonpreload specimen on fence
 
                 .addTemporalMarker(0, 0.05, () ->
@@ -189,10 +208,10 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                 .waitSeconds(0.1)
 
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(13.6,0,  Math.toRadians(1)),Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(15.1,0,  Math.toRadians(1)),Math.toRadians(0))
                 .build();
 
-        place[1] = bot.drive.trajectorySequenceBuilder(new Pose2d(11.55,0,  Math.toRadians(10)))
+        place[1] = bot.drive.trajectorySequenceBuilder(place[0].end())
                 //place first nonpreload specimen on fence
                 .addTemporalMarker(0.3,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
@@ -238,15 +257,15 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                 })
 
-                .lineToLinearHeading(new Pose2d(13.5, -32.5,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(12, -32.5,Math.toRadians(180)))
                 .waitSeconds(0.1)
 
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(15.7,-2,Math.toRadians(1)),Math.toRadians(50))
+                .splineToLinearHeading(new Pose2d(17.6,-2,Math.toRadians(1)),Math.toRadians(50))
 
                 .build();
 
-        place[2] = bot.drive.trajectorySequenceBuilder(new Pose2d(13.65,0,  Math.toRadians(10)))
+        place[2] = bot.drive.trajectorySequenceBuilder(place[1].end())
                 //place first nonpreload specimen on fence
                 .addTemporalMarker(0.3,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
@@ -292,11 +311,11 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                 })
 
-                .lineToLinearHeading(new Pose2d(13.15, -32.5,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(11.2, -32.5,Math.toRadians(180)))
                 .waitSeconds(0.1)
 
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(17.3,-2,Math.toRadians(1)),Math.toRadians(50))
+                .splineToLinearHeading(new Pose2d(19,-2,Math.toRadians(1)),Math.toRadians(50))
 
                 .build();
 
@@ -306,10 +325,11 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(5, -32.5, Math.toRadians(-90)))
                 //.lineToLinearHeading(new Pose2d(12.25,-32.5,Math.toRadians(170)))
 
-                .addDisplacementMarker(()->{
+                .addTemporalMarker(0.5,0.1,()->{
                     bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+                    bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
 
                 })
                 .build();

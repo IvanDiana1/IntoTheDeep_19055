@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.teamcode.lib.Controller;
 import org.firstinspires.ftc.teamcode.util.Claw;
 import org.firstinspires.ftc.teamcode.util.Lifteer;
@@ -123,7 +124,7 @@ public class TestTeleop extends LinearOpMode {
                 } else
                 if( bot.lifter.Target == Lifteer.LIFTER_STATES.LOWMID.val){
                       if(isExtended) {
-                          bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                          //bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
 
                           sleep(300);
                           if (Thread.currentThread().isInterrupted()) {
@@ -192,7 +193,10 @@ public class TestTeleop extends LinearOpMode {
             }
 
             if(controller2.circle.isPressed()){
-                bot.claw.clawVRotate();
+                if (bot.lifter.Target<Lifteer.LIFTER_STATES.LOWMID.val+260 && bot.lifter.Target>Lifteer.LIFTER_STATES.LOWMID.val-260 && bot.claw.vState == Claw.VERTICAL_STATES.MIDDLE)
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+                else
+                    bot.claw.clawVRotate();
             }
 
             if (Math.abs(controller2.leftStickY)>0.2){

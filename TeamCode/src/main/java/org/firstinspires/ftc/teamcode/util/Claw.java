@@ -8,9 +8,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Claw {
     private Servo clawHold, clawHRot, clawVRot;
     private Telemetry telemetry;
-    private  HOLD_STATES holdState = HOLD_STATES.HOLD;
-    private  VERTICAL_STATES vState = VERTICAL_STATES.UP;
-    private  HORIZONTAL_STATES hState = HORIZONTAL_STATES.PARALEL;
+    public  HOLD_STATES holdState = HOLD_STATES.HOLD;
+    public  VERTICAL_STATES vState = VERTICAL_STATES.UP;
+    public  HORIZONTAL_STATES hState = HORIZONTAL_STATES.PARALEL;
 
     public Claw(HardwareMap hwmap, Telemetry telemetry){
         clawHold = hwmap.get(Servo.class, HardwareConfig.ClawHold);
@@ -61,9 +61,9 @@ public class Claw {
         clawHRot.setPosition(hState.val);
     }
     public void clawVRotate(){
-        if (vState==VERTICAL_STATES.UP)
+        if (vState==VERTICAL_STATES.UP|| vState == VERTICAL_STATES.MIDDLE)
             vState = VERTICAL_STATES.DOWN;
-        else if (vState==VERTICAL_STATES.DOWN|| vState ==   VERTICAL_STATES.MIDDLE || vState == VERTICAL_STATES.LOWMID)
+        else if (vState==VERTICAL_STATES.DOWN || vState == VERTICAL_STATES.LOWMID)
             vState = VERTICAL_STATES.UP;
 
 
