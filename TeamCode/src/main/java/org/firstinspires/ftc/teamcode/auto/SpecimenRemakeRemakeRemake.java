@@ -109,7 +109,7 @@ public class SpecimenRemakeRemakeRemake extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
                 })
                 .addTemporalMarker(0.75,0.8,()->{
-                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULAR);
+                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULARLeft);
                 })
 
                 .lineToLinearHeading(new Pose2d(38.9, -40.78, Math.toRadians(-90)))

@@ -113,7 +113,7 @@ public void buildTrajectories(){
             .addTemporalMarker(0.1,0,()->{
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULAR);
+                bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULARLeft);
             })
             .addTemporalMarker(0.3,0.2,()->{
                 bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);

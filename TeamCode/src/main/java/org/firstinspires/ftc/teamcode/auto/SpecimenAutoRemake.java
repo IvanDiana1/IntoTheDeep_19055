@@ -119,7 +119,7 @@ public class SpecimenAutoRemake extends LinearOpMode {
                 .addTemporalMarker(0.2,0,()->{
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULAR);
+                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULARLeft);
                 })
 
                 //start lowering lifter
