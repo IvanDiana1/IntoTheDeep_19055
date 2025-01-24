@@ -55,7 +55,7 @@ public class SampleAutoSpecimen extends LinearOpMode {
              //spike mark 1
              .addSpatialMarker(new Vector2d(19, 21), () -> {
                  bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                 bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.TILTED);
+                 bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.RTILTED);
                  sleep(300);
                  bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                  sleep(200);
@@ -203,7 +203,7 @@ public class SampleAutoSpecimen extends LinearOpMode {
         sleep(300);
         bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
         bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
-        bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.TILTED);
+        bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.RTILTED);
         sleep(300);
         bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
         sleep(200);

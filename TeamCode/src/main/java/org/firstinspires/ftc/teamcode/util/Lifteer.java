@@ -30,7 +30,8 @@ public class Lifteer implements Updateable{
     //public static PIDFController pidCLift = new PIDFController();
     public static PIDFController pidCLift  =new PIDFController(pidLift);
     public static VoltageSensor voltage_sensor;
-    public Lifteer (HardwareMap hardwareMap , Telemetry telemetry ){
+
+    public Lifteer(HardwareMap hardwareMap, Telemetry telemetry) {
         rlifter = hardwareMap.get(DcMotorEx.class, HardwareConfig.LifterRight);
         llifter = hardwareMap.get(DcMotorEx.class, HardwareConfig.LifterLeft);
         voltage_sensor = hardwareMap.getAll(VoltageSensor.class).get(0);
@@ -56,7 +57,7 @@ public class Lifteer implements Updateable{
         pidCLift = new PIDFController(pidLift);
     }
 
-    public static enum LIFTER_STATES{
+    public enum LIFTER_STATES{
        DOWN(0), UP(4250), MIDDLE(2300),SPECIMEN(1625), AGATATED(1550), LOWMID(450);
        public final int val;
        LIFTER_STATES(int val){

@@ -201,7 +201,7 @@ public class SampleAutoSample extends LinearOpMode {
             telemetry.update();
         }
 
-        pickUp(Claw.HORIZONTAL_STATES.TILTED);
+        pickUp(Claw.HORIZONTAL_STATES.RTILTED);
 
         bot.drive.followTrajectorySequenceAsync(place[0]);
 

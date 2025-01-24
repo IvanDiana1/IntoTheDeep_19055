@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-public class Linkage {
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+public class Linkage{
     private Servo leftLinkage, rightLinkage;
     private EXTEND_STATES extendState = EXTEND_STATES.CLOSE;
     private double dif = 0.02;
-    public Linkage(HardwareMap hwmap ){
-
+    public Linkage(HardwareMap hwmap, Telemetry telemetry){
         leftLinkage = hwmap.get(Servo.class, HardwareConfig.LeftLinkage);
         rightLinkage = hwmap.get(Servo.class, HardwareConfig.RightLinkage);
 
@@ -41,5 +43,6 @@ public class Linkage {
         leftLinkage.setPosition(extendState.val+dif);
         rightLinkage.setPosition(extendState.val);
     }
+
 
 }

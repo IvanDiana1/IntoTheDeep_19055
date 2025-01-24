@@ -17,11 +17,13 @@ public class Claw {
         clawHRot = hwmap.get(Servo.class, HardwareConfig.ClawHRotation);
         clawVRot = hwmap.get(Servo.class, HardwareConfig.ClawVRotation);
 
+
         clawHold.setPosition(holdState.val);
         clawHRot.setPosition(hState.val);
         clawVRot.setPosition(vState.val);
-
     }
+
+
     public enum HOLD_STATES{
         HOLD(0.42),RELEASE(0.15) , HOLD_STRONGER(0.5);
         double val;
@@ -30,14 +32,14 @@ public class Claw {
         }
     }
     public enum HORIZONTAL_STATES {
-        PARALEL(0.25), PERPENDICULARLeft(0), PERPENDICULARRight(0.5) ,  REVERESED(1),TILTED(0.28);
+        PARALEL(0.25), PERPENDICULARLeft(0), PERPENDICULARRight(0.5) ,  REVERESED(1), RTILTED(0.28),LTILTED(0.12),LTILTED2(LTILTED.val-0.025);
         double val;
         HORIZONTAL_STATES(double val) {
             this.val = val;
         }
     }
     public enum VERTICAL_STATES{
-      UP(1),DOWN(0.22),  LOWMID(0.3),  HIGHMID(0.75),   MIDDLE(0.65);
+      UP(1),DOWN(0.22),  LOWMID(0.3),  HIGHMID(0.75),   MIDDLE(0.62);
         double val;
         VERTICAL_STATES(double val) {
             this.val = val;
