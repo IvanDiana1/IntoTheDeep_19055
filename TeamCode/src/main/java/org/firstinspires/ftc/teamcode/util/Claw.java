@@ -32,7 +32,7 @@ public class Claw {
         }
     }
     public enum HORIZONTAL_STATES {
-        PARALEL(0.25), PERPENDICULARLeft(0), PERPENDICULARRight(0.5) ,  REVERESED(1), RTILTED(0.28),LTILTED(0.12),LTILTED2(LTILTED.val-0.025);
+        PARALEL(0.25), PERPENDICULAR(0), PERPENDICULARRight(0.5) ,  REVERESED(1), RTILTED(0.28),LTILTED(0.12),LTILTED2(LTILTED.val-0.025);
         double val;
         HORIZONTAL_STATES(double val) {
             this.val = val;
@@ -55,9 +55,9 @@ public class Claw {
     public void clawHRotate(){
         // paralel -> perpendicular - > reversed
         if (hState==HORIZONTAL_STATES.PARALEL)
-            hState = HORIZONTAL_STATES.PERPENDICULARLeft;
+            hState = HORIZONTAL_STATES.PERPENDICULAR;
 
-        else if(hState==HORIZONTAL_STATES.PERPENDICULARLeft)
+        else if(hState==HORIZONTAL_STATES.PERPENDICULAR)
             hState = HORIZONTAL_STATES.PARALEL;
 
         clawHRot.setPosition(hState.val);

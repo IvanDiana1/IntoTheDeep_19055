@@ -50,17 +50,20 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                 .build();
         spikeMarks[0] = bot.drive.trajectorySequenceBuilder(startPhase[0].end())
                 //spike mark 1
-                .addTemporalMarker(0.2,0.1,()->{
+                .addTemporalMarker(0.2,0.3,()->{
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                 })
-                .addTemporalMarker(0.42,0.05,()->{
+                .addTemporalMarker(0.5,0.05,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
+
+                })
+                .addTemporalMarker(0.5, 0.4, ()-> {
                     bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.LTILTED);
                 })
-                .addTemporalMarker(0.42,0.5,()->{
+                .addTemporalMarker(0.5,0.55,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
-                .addTemporalMarker(0.42,0.63,()->{
+                .addTemporalMarker(0.5,0.63,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                     bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
                 })
@@ -72,7 +75,7 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
 
                 })
-                .lineToLinearHeading(new Pose2d(24.6, -29.5, Math.toRadians(-40)))
+                .lineToLinearHeading(new Pose2d(24.9, -29.5, Math.toRadians(-40)))
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(23, -33, Math.toRadians(-135)),Math.toRadians(90))
                 .build();
@@ -83,11 +86,13 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                 })
                 .addTemporalMarker(0.16,0.28,()->{
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.LTILTED2);
-
 
                 })
-                .addTemporalMarker(0.16,0.41,()->{
+                .addTemporalMarker(0.16,0.3,()->{
+                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.LTILTED2);
+
+                })
+                .addTemporalMarker(0.16,0.47,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
                 .addTemporalMarker(0.16,0.54,()->{
@@ -101,26 +106,35 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                 .addTemporalMarker(0.67,0.25,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
                 })
+                .addTemporalMarker(0.75, 0 , ()->
+                {    bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
 
-                .lineToLinearHeading(new Pose2d(26.5, -34.3, Math.toRadians(-40)))
+                })
+                .lineToLinearHeading(new Pose2d(27.6, -34.3, Math.toRadians(-40)))
                 .splineToLinearHeading(new Pose2d(23, -37, Math.toRadians(-135)),Math.toRadians(0))
                 .build();
-        spikeMarks[2] = bot.drive.trajectorySequenceBuilder(spikeMarks[1].end())
-                .addTemporalMarker(0.55,0.3,()->{
-                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
-                })
-                .addTemporalMarker(0.6,0.28,()->{
+        spikeMarks[2] = bot.drive.trajectorySequenceBuilder(new Pose2d(19.6, -45, Math.toRadians(-150)))
+
+                .addTemporalMarker(0.4,0,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.LTILTED2);
-
-
+                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULAR);
                 })
+                .addTemporalMarker(0.6,0.2,()->{
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
+                })
+                //start lowering lifter
+                .addTemporalMarker(0.63,0.45,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
+                })
+                //collect last sample from spikemark
 
+                .addTemporalMarker(0.77,0.93,()->{
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.LOWMID);
+                })
+                //raise last sample from spikemark
 
-
-
-                .lineToLinearHeading(new Pose2d(25.2, -46, Math.toRadians(-40)))
-
+                .lineToLinearHeading(new Pose2d(38.2, -44.2, Math.toRadians(-90)))
                 .build();
 
         spikeMarks[3] = bot.drive.trajectorySequenceBuilder(spikeMarks[2].end())
@@ -129,9 +143,10 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                     bot.claw.clawCatch(Claw.HOLD_STATES.HOLD);
                 })
 
-
                 .addTemporalMarker(0,0.15,()->{
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
+                    bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PARALEL);
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
 
                 })
 
@@ -189,26 +204,24 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 })
 
-                .addTemporalMarker(3.8+delta,()->{
-
-                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
-                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
-                })
-
                 .addTemporalMarker(0.85,0.2,()->{
                     bot.linkage.linkageMove(Linkage.EXTEND_STATES.PARTIAL_EXTEND);
                 })
 
-                .lineToLinearHeading(new Pose2d(13.5,-32,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(14.3,-32,Math.toRadians(180)))
                 .waitSeconds(0.1)
 
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(15.1,0,  Math.toRadians(1)),Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(16.3,0,  Math.toRadians(1)),Math.toRadians(0))
                 .build();
 
         place[1] = bot.drive.trajectorySequenceBuilder(place[0].end())
+                .addTemporalMarker(0,0.15,()->{
+                    bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
+                    bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
+                })
                 //place first nonpreload specimen on fence
-                .addTemporalMarker(0.3,()->{
+                .addTemporalMarker(0.25,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
 
                 })
@@ -252,11 +265,11 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                 })
 
-                .lineToLinearHeading(new Pose2d(12.4, -32.5,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(12.9, -32.5,Math.toRadians(180)))
                 .waitSeconds(0.1)
 
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(17.6,-2,Math.toRadians(1)),Math.toRadians(50))
+                .splineToLinearHeading(new Pose2d(18.5,-2,Math.toRadians(1)),Math.toRadians(50))
 
                 .build();
 
@@ -282,6 +295,7 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                 .addTemporalMarker(0.42, 0.46 , () ->
                 {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.UP);
+                    bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                 })
                 .addTemporalMarker(2.65,()->{
 
@@ -297,7 +311,7 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                             bot.linkage.linkageMove(Linkage.EXTEND_STATES.CLOSE);
                         }
                 )
-                .addTemporalMarker(5.1,()->{
+                .addTemporalMarker(5.23,()->{
                     bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
                 })
 
@@ -306,11 +320,11 @@ public class Specimenx10Remakeuri extends LinearOpMode {
                     bot.claw.clawVRotate(Claw.VERTICAL_STATES.MIDDLE);
                 })
 
-                .lineToLinearHeading(new Pose2d(11.6, -32.5,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(11.95, -32.5,Math.toRadians(180)))
                 .waitSeconds(0.1)
 
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(19,-2,Math.toRadians(1)),Math.toRadians(50))
+                .splineToLinearHeading(new Pose2d(21.5,-2,Math.toRadians(1)),Math.toRadians(50))
 
                 .build();
 

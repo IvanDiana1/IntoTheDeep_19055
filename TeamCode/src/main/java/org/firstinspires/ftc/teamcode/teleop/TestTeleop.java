@@ -228,7 +228,7 @@ public class TestTeleop extends LinearOpMode {
             }
 
             if( controller2.dpadRight.isPressed()){
-                bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDLE.val);
+                bot.lifter.setTarget(Lifteer.LIFTER_STATES.MIDDAL.val);
                 isUp = true;
             }
             if (controller2.dpadLeft.isPressed()){
