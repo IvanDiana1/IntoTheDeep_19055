@@ -22,6 +22,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/*
+Camera Matrix (Intrinsic Parameters):
+[[815.18353895   0.         336.13375632]
+ [  0.         816.46593397 234.37512541]
+ [  0.           0.           1.        ]]
+
+Distortion Coefficients:
+[[-2.01722275e-02  1.38887531e+00  3.30332373e-04 -5.11935765e-04
+  -5.56527080e+00]]
+ */
+
 
 // is this actually even smart ???
 public class AprilTagSmartDetection extends OpenCvPipeline {
