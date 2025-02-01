@@ -5,10 +5,9 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -23,7 +22,8 @@ public class Lifteer implements Updateable{
     private boolean motors_resetable;
     public static int autoPos = 0;
     private static boolean runPID = true;
-    private static double p=30 , i =0.3 , d =1;
+    private static double p=14, i =0.2 , d =0.1;
+    public static double kF= 0.14;
 
 
     public static PIDCoefficients pidLift = new PIDCoefficients (p , i , d) ;
@@ -58,7 +58,7 @@ public class Lifteer implements Updateable{
     }
 
     public enum LIFTER_STATES{
-       DOWN(0), UP(4250), MIDDLE(2400),SPECIMEN(1625), AGATATED(1550), LOWMID(450),MIDDAL(2300);
+       DOWN(0), UP(4250), MIDDLE(2440),SPECIMEN(1700), AGATATED(1550), LOWMID(530),MIDDAL(2350);
        public final int val;
        LIFTER_STATES(int val){
            this.val = val;
@@ -82,7 +82,7 @@ public class Lifteer implements Updateable{
         if(!runPID)
             return;
 
-        double power =pidCLift.update(((double)currentPos/MaxRange))*(12/ voltage_sensor.getVoltage());
+        double power = Range.clip(pidCLift.update(((double)currentPos/MaxRange))*(12/ voltage_sensor.getVoltage()) + kF,-1,1);
         llifter.setPower(power);
         rlifter.setPower(power);
         telemetryData();

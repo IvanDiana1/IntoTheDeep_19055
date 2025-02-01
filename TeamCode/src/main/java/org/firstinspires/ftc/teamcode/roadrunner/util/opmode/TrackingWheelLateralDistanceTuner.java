@@ -5,10 +5,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive3;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer2;
+import org.firstinspires.ftc.teamcode.util.Linkage;
 
 /**
  * Opmode designed to assist the user in tuning the `StandardTrackingWheelLocalizer`'s
@@ -65,6 +67,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLoca
 @TeleOp(group = "drive")
 public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
     public static int NUM_TURNS = 10;
+    public Servo leftlinkage,rightlinkage;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -82,6 +86,11 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
         telemetry.addLine("");
         telemetry.addLine("Press Y/△ to stop the routine.");
         telemetry.update();
+
+        leftlinkage = hardwareMap.get(Servo.class,"llinkage");
+        rightlinkage = hardwareMap.get(Servo.class,"rlinkage");
+        leftlinkage.setPosition(0.585);
+        rightlinkage.setPosition(0.585);
 
         waitForStart();
 

@@ -32,7 +32,7 @@ public class Claw {
         }
     }
     public enum HORIZONTAL_STATES {
-        PARALEL(0.25), PERPENDICULAR(0), PERPENDICULARRight(0.5) ,  REVERESED(1), RTILTED(0.28),LTILTED(0.12),LTILTED2(LTILTED.val-0.025);
+        PARALEL(0.25), PERPENDICULAR(0), PERPENDICULARRight(0.5) ,  REVERESED(1), RTILTED(0.28),LTILTED(0.12),LTILTED2(LTILTED.val-0.025),RTILTED_THROW(0.4);
         double val;
         HORIZONTAL_STATES(double val) {
             this.val = val;

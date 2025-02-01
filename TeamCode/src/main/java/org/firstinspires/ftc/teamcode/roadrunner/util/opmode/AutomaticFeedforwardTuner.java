@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
@@ -33,6 +34,7 @@ import java.util.List;
 public class AutomaticFeedforwardTuner extends LinearOpMode {
     public static double MAX_POWER = 1;
     public static double DISTANCE = 100; // in
+    public Servo leftlinkage,rightlinkage;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,6 +51,12 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
         telemetry.addLine("Press play to begin the feedforward tuning routine");
         telemetry.update();
+
+
+        leftlinkage = hardwareMap.get(Servo.class,"llinkage");
+        rightlinkage = hardwareMap.get(Servo.class,"rlinkage");
+        leftlinkage.setPosition(0.585);
+        rightlinkage.setPosition(0.585);
 
         waitForStart();
 
