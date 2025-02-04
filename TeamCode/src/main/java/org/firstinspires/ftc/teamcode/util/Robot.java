@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive2;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive3;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 
 public class Robot implements Updateable{
     public Linkage linkage;
@@ -15,6 +17,18 @@ public class Robot implements Updateable{
      public VoltageSensor voltage_sensor;
      public Lifteer lifter;
      public boolean frozenInitted = false;
+     //public AprilTagLibrary apriltaglib = AprilTagGameDatabase.getIntoTheDeepTagLibrary();
+
+     public Robot(){}
+
+     // just overloaded this to not break the clasess in auto
+     public Robot(boolean frozenInit){
+         FrozenInit();
+     }
+
+    public Robot(HardwareMap hwmap, Telemetry telemetry) {
+         Init(hwmap, telemetry);
+    }
 
     public SampleMecanumDrive2 drive;
     public void Init(HardwareMap hwmap, Telemetry telemetry ){

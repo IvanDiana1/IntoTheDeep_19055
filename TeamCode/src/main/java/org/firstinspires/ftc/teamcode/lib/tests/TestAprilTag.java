@@ -55,6 +55,7 @@ public class TestAprilTag extends LinearOpMode {
             //telemetry.addData("t2:", pipeline.tvec2.dump());
             telemetry.addData("rotation:", pipeline.rvec.dump());
             //telemetry.addData("r2:", pipeline.rvec2.dump());
+            telemetry.addData("coordsH:", pipeline.coordsH.dump());
             telemetry.addData("theta:", pipeline.theta);
             telemetry.addData("id:", pipeline.getTagId());
             telemetry.addData("debug", pipeline.debug);

@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.util.Angle;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
@@ -16,24 +15,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.apriltag.*;
 import org.opencv.calib3d.Calib3d;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-/*
-Camera Matrix (Intrinsic Parameters):
-[[815.18353895   0.         336.13375632]
- [  0.         816.46593397 234.37512541]
- [  0.           0.           1.        ]]
-
-Distortion Coefficients:
-[[-2.01722275e-02  1.38887531e+00  3.30332373e-04 -5.11935765e-04
-  -5.56527080e+00]]
- */
-
-
 // is this actually even smart ???
 public class AprilTagSmartDetection extends OpenCvPipeline {
     public final long detectorPtr;
@@ -43,18 +24,8 @@ public class AprilTagSmartDetection extends OpenCvPipeline {
 
     public static final double TAGSIZE = 0.1016, FX = 822.317, FY = 822.317, CX = 319.495, CY = 242.502;
 
-    public static final Mat cameraTranslation = new Mat(3, 1, CvType.CV_32F);
-    static{
-        cameraTranslation.put(0, 0, new double[]{0, 0, 0});
-    }
-
-    public static final Mat cameraRotation = new Mat(3, 1, CvType.CV_32F);
-    static{
-        cameraRotation.put(0, 0, new double[]{0, 0, 0});
-    }
-
     public AprilTagSmartDetection(){
-        this.detectorPtr = AprilTagDetectorJNI.createApriltagDetector("tag36h11", 1.5F, 2);
+        this.detectorPtr = AprilTagDetectorJNI.createApriltagDetector("tag36h11", 2F, 2);
 
         coordsH.put(0, 0, new double[]{0, 0, 0, 1});
 
@@ -135,14 +106,15 @@ public class AprilTagSmartDetection extends OpenCvPipeline {
     );
     private static final Mat intrinsicParams = new Mat(3, 3, CvType.CV_32F);
     static {
-        intrinsicParams.put(0, 0, new double[] {FX, 0, CX, 0, FY, CY, 0, 0, 1});
+        intrinsicParams.put(0, 0, new double[]{FX, 0, CX, 0, FY, CY, 0, 0, 1});
     }
+
     private static final MatOfDouble distCoeffs = new MatOfDouble();
     static {
         distCoeffs.fromArray(new double[] {-0.0449369, 1.17277, 0, 0, -1.33244, 0, 0, 0});
     }
+
     public Mat rvec = new Mat(1, 3, CvType.CV_32F), tvec = new Mat(1, 3, CvType.CV_32F);
-    public Mat rvec2 = new Mat(1, 3, CvType.CV_32F), tvec2 = new Mat(1, 3, CvType.CV_32F);
     private void computeTvecRvec(MatOfPoint2f mat2dcameraframe){
         Calib3d.solvePnP(
                 mat3dapriltag,
@@ -156,7 +128,7 @@ public class AprilTagSmartDetection extends OpenCvPipeline {
         Calib3d.solvePnPRefineLM(mat3dapriltag, mat2dcameraframe, intrinsicParams, distCoeffs, rvec, tvec);
     }
 
-    public Mat buildTransformationMatrix(Mat _rvec, Mat _tvec){
+    public static Mat buildTransformationMatrix(Mat _rvec, Mat _tvec){
         // rodrigues to get R = RxRyRz
         Mat rmat = new Mat(3, 3, CvType.CV_32F);
         Calib3d.Rodrigues(_rvec, rmat);
@@ -169,9 +141,23 @@ public class AprilTagSmartDetection extends OpenCvPipeline {
                 [ 0   0   0   1 ]
              */
         Mat transform = new Mat(4, 4, CvType.CV_32F);
-        rmat.copyTo(transform.colRange(0, 3).rowRange(0, 3));
-        _tvec.copyTo(transform.col(4).rowRange(0, 3));
-        transform.put(4, 0, new double[]{0, 0, 0, 1});
+        transform.put(0, 0, rmat.get(0, 0));
+        transform.put(0, 1, rmat.get(0, 1));
+        transform.put(0, 2, rmat.get(0, 2));
+        transform.put(0, 3, _tvec.get(0, 0));
+        transform.put(1, 0, rmat.get(1, 0));
+        transform.put(1, 1, rmat.get(1, 1));
+        transform.put(1, 2, rmat.get(1, 2));
+        transform.put(1, 3, _tvec.get(0, 1));
+        transform.put(2, 0, rmat.get(2, 0));
+        transform.put(2, 1, rmat.get(2, 1));
+        transform.put(2, 2, rmat.get(2, 2));
+        transform.put(2, 3, _tvec.get(0, 2));
+        transform.put(3, 0, 0);
+        transform.put(3, 1, 0);
+        transform.put(3, 2, 0);
+        transform.put(3, 3, 1);
+
 
         return transform;
     }
@@ -182,29 +168,35 @@ public class AprilTagSmartDetection extends OpenCvPipeline {
     }
 
     public static final double YAW = 0, PITCH = 0, ROLL = 0;
+    public static final double XCAM = 0, YCAM = 0, ZCAM = 0;
     public static final Mat rvecCamera = new Mat(1, 3, CvType.CV_32F);
     static{
         rvecCamera.put(0, 0, new double[]{PITCH, YAW, ROLL});
     }
-    public static final Mat rmatCamera = new Mat(3, 3, CvType.CV_32F);
-    static {
-        Calib3d.Rodrigues(rvecCamera, rmatCamera);
+    public static final Mat tvecCamera = new Mat(1, 3, CvType.CV_32F);
+    static{
+        tvecCamera.put(0, 0, new double[]{XCAM, YCAM, ZCAM});
     }
     // transformation matrix from camera frame to robot frame
-    public static final Mat transform2 = new Mat(4, 4, CvType.CV_32F);
-    static {
-        transform2.put(0, 0,
-                new double[]{
-                    rmatCamera.get(0, 0)[0], rmatCamera.get(0, 1)[0], rmatCamera.get(0, 2)[0], 1,
-                    rmatCamera.get(1, 0)[0], rmatCamera.get(1, 1)[0], rmatCamera.get(1, 2)[0], 1,
-                    rmatCamera.get(2, 0)[0], rmatCamera.get(2, 1)[0], rmatCamera.get(2, 2)[0], 1,
-                    0                      , 0                      , 0                      , 1
-                });
+    public static final Mat transformCamera2Robot = buildTransformationMatrix(rvecCamera, tvecCamera).inv();
+
+    public static Mat getRvecFromRmat(Mat _rmat){
+        Mat _rvec = new Mat(1, 3, CvType.CV_32F);
+        Calib3d.Rodrigues(_rmat, _rvec);
+
+        // theta = arccos((trR - 1) / 2)
+        // ux = (r32 - r23) / (2 sin theta)
+        // uy = ...  uz = ...
+        // theta_x = ux * theta
+        // theta_y = uy * theta
+        // theta_z = uz * theta
+
+        return _rvec;
     }
 
     // THE OUTPUTS: ----
     public double theta;
-    public Mat coordsH = new Mat(1, 4, CvType.CV_32F);
+    public Mat coordsH = new Mat(4, 1, CvType.CV_32F);
     // ----------------- + tagId which was defined earlier
 
     public static final Mat emptyMat = new Mat();
@@ -214,30 +206,25 @@ public class AprilTagSmartDetection extends OpenCvPipeline {
             return emptyMat;
         }
 
-        if(start && ! kill){
+        if(start && ! kill) {
             int ok = detectAllTags(input);
 
-            if(ok == 0){
+            if (ok == 0) {
                 return input;
             }
 
             computeTvecRvec(crazyMat);
 
-            //Mat transform1 = buildTransformationMatrix(rvec, tvec);
+            Mat transform1 = buildTransformationMatrix(rvec, tvec.reshape(1, new int[]{1, 3}));
+            Mat transform = transform1.inv().matMul(transformCamera2Robot);
+            coordsH = transform.matMul(originH);
 
-            // get coordinates of april tag relative to the camera frame of reference
-            //coordsH.put(0, 0, tvec.get(0, 0)[0]);
-            //coordsH.put(1, 0, tvec.get(0, 1)[0]);
-            //coordsH.put(2, 0, tvec.get(0, 2)[0]);
-            //coordsH.matMul(transform2); // x y z of april tag with respect to robot
+            theta = getRvecFromRmat(transform.submat(0, 3, 0, 3)).get(1, 0)[0] * 180 / Math.PI;
 
-            //theta = Angle.norm(/*PITCH +*/ rvec.get(0, 2)[0]);
-
-            //List<MatOfPoint> drawMat = Collections.singletonList(new MatOfPoint(crazyMat.toArray()));
-
-            //Imgproc.polylines(input, drawMat, true, new Scalar(100, 100, 100));
+            for (Point p : crazyMat.toArray()) {
+                Imgproc.circle(input, p, 5, new Scalar(100, 100, 100));
+            }
         }
-
         return input;
     }
 
