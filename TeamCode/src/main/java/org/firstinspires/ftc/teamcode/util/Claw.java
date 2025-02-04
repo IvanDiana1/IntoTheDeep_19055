@@ -25,7 +25,7 @@ public class Claw {
 
 
     public enum HOLD_STATES{
-        HOLD(0.42),RELEASE(0.15) , HOLD_STRONGER(0.5);
+        HOLD(0.408),RELEASE(0.67) , HOLD_STRONGER(0.5);
         double val;
         HOLD_STATES(double val) {
             this.val = val;

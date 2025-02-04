@@ -72,6 +72,8 @@ public void buildTrajectories(){
             .addTemporalMarker(0.5,0.3, () ->
             {
                 bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
+                bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
+
             })
             .addTemporalMarker(0.55,0.25 , () ->
             {
@@ -79,10 +81,6 @@ public void buildTrajectories(){
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
             })
 
-            .addTemporalMarker(0.55,0.3 , () ->
-            {
-                bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
-            })
 
 
 
