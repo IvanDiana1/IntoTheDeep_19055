@@ -72,6 +72,8 @@ public void buildTrajectories(){
             .addTemporalMarker(0.5,0.3, () ->
             {
                 bot.claw.clawCatch(Claw.HOLD_STATES.RELEASE);
+                bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
+
             })
             .addTemporalMarker(0.55,0.25 , () ->
             {
@@ -79,10 +81,6 @@ public void buildTrajectories(){
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.DOWN.val);
             })
 
-            .addTemporalMarker(0.55,0.3 , () ->
-            {
-                bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);
-            })
 
 
 
@@ -101,7 +99,7 @@ public void buildTrajectories(){
             .build();
 
     place[1] = bot.drive.trajectorySequenceBuilder(place[0].end())
-            .setAccelConstraint(new ProfileAccelerationConstraint(7))
+            .setAccelConstraint(new ProfileAccelerationConstraint(12))
             .splineToLinearHeading(new Pose2d(19.8,43.5,Math.toRadians(0)),Math.toRadians(0))
             .build();
 
@@ -113,7 +111,7 @@ public void buildTrajectories(){
             .addTemporalMarker(0.1,0,()->{
                 bot.lifter.setTarget(Lifteer.LIFTER_STATES.LOWMID.val);
                 bot.claw.clawVRotate(Claw.VERTICAL_STATES.DOWN);
-                bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULARLeft);
+                bot.claw.clawHRotate(Claw.HORIZONTAL_STATES.PERPENDICULAR);
             })
             .addTemporalMarker(0.3,0.2,()->{
                 bot.linkage.linkageMove(Linkage.EXTEND_STATES.HIGHMID);

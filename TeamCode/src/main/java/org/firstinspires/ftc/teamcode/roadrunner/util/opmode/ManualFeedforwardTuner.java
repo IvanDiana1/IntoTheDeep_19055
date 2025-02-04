@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
@@ -41,6 +42,8 @@ public class ManualFeedforwardTuner extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private SampleMecanumDrive3 drive;
+    public Servo leftlinkage,rightlinkage;
+
 
     enum Mode {
         DRIVER_MODE,
@@ -74,6 +77,12 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         telemetry.update();
         telemetry.clearAll();
 
+
+        leftlinkage = hardwareMap.get(Servo.class,"llinkage");
+        rightlinkage = hardwareMap.get(Servo.class,"rlinkage");
+        leftlinkage.setPosition(0.585);
+        rightlinkage.setPosition(0.585);
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -85,7 +94,8 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
         while (!isStopRequested()) {
             telemetry.addData("mode", mode);
-
+            leftlinkage.setPosition(0.585);
+            rightlinkage.setPosition(0.585);
             switch (mode) {
                 case TUNING_MODE:
                     if (gamepad1.y) {

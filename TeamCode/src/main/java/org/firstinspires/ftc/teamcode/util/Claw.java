@@ -25,14 +25,14 @@ public class Claw {
 
 
     public enum HOLD_STATES{
-        HOLD(0.42),RELEASE(0.15) , HOLD_STRONGER(0.5);
+        HOLD(0.408),RELEASE(0.67) , HOLD_STRONGER(0.5);
         double val;
         HOLD_STATES(double val) {
             this.val = val;
         }
     }
     public enum HORIZONTAL_STATES {
-        PARALEL(0.25), PERPENDICULARLeft(0), PERPENDICULARRight(0.5) ,  REVERESED(1), RTILTED(0.28),LTILTED(0.12),LTILTED2(LTILTED.val-0.025);
+        PARALEL(0.25), PERPENDICULAR(0), PERPENDICULARRight(0.5) ,  REVERESED(1), RTILTED(0.28),LTILTED(0.12),LTILTED2(LTILTED.val-0.025),RTILTED_THROW(0.4);
         double val;
         HORIZONTAL_STATES(double val) {
             this.val = val;
@@ -55,9 +55,9 @@ public class Claw {
     public void clawHRotate(){
         // paralel -> perpendicular - > reversed
         if (hState==HORIZONTAL_STATES.PARALEL)
-            hState = HORIZONTAL_STATES.PERPENDICULARLeft;
+            hState = HORIZONTAL_STATES.PERPENDICULAR;
 
-        else if(hState==HORIZONTAL_STATES.PERPENDICULARLeft)
+        else if(hState==HORIZONTAL_STATES.PERPENDICULAR)
             hState = HORIZONTAL_STATES.PARALEL;
 
         clawHRot.setPosition(hState.val);
