@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.lib;
 
 import com.acmerobotics.roadrunner.util.Angle;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
@@ -167,18 +168,23 @@ public class AprilTagSmartDetection extends OpenCvPipeline {
         originH.put(0, 0, new double[]{0, 0, 0, 1});
     }
 
+
     public static final double YAW = 0, PITCH = 0, ROLL = 0;
-    public static final double XCAM = 0, YCAM = 0, ZCAM = 0;
+    public static final double XCAM = -0.187, YCAM = 0, ZCAM = -0.065;
+    public static final Mat tvecCameraPbn = new Mat(4, 1, CvType.CV_32F);
+    static{
+        tvecCameraPbn.put(0, 0, new double[]{XCAM, YCAM, ZCAM, 0});
+    }
     public static final Mat rvecCamera = new Mat(1, 3, CvType.CV_32F);
     static{
-        rvecCamera.put(0, 0, new double[]{PITCH, YAW, ROLL});
+        rvecCamera.put(0, 0, new double[]{YAW, PITCH, ROLL});
     }
     public static final Mat tvecCamera = new Mat(1, 3, CvType.CV_32F);
     static{
-        tvecCamera.put(0, 0, new double[]{XCAM, YCAM, ZCAM});
+        tvecCamera.put(0, 0, new double[]{0, 0, 0});
     }
     // transformation matrix from camera frame to robot frame
-    public static final Mat transformCamera2Robot = buildTransformationMatrix(rvecCamera, tvecCamera).inv();
+    public static final Mat transformCamera2Robot = buildTransformationMatrix(rvecCamera, tvecCamera);
 
     public static Mat getRvecFromRmat(Mat _rmat){
         Mat _rvec = new Mat(1, 3, CvType.CV_32F);
@@ -218,8 +224,9 @@ public class AprilTagSmartDetection extends OpenCvPipeline {
             Mat transform1 = buildTransformationMatrix(rvec, tvec.reshape(1, new int[]{1, 3}));
             Mat transform = transform1.inv().matMul(transformCamera2Robot);
             coordsH = transform.matMul(originH);
+            Core.add(coordsH, tvecCameraPbn, coordsH);
 
-            theta = getRvecFromRmat(transform.submat(0, 3, 0, 3)).get(1, 0)[0] * 180 / Math.PI;
+            theta = getRvecFromRmat(transform.submat(0, 3, 0, 3)).get(1, 0)[0] * 180 / Math.PI - 23.5 - 90;
 
             for (Point p : crazyMat.toArray()) {
                 Imgproc.circle(input, p, 5, new Scalar(100, 100, 100));
